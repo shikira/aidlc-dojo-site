@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+.astro/
+.output/
+
+# Test / coverage
+coverage/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment / secrets (SEC-4: never commit secrets)
+.env
+.env.*
+!.env.example
+
+# OS / editor
+.DS_Store
+*.swp
+.vscode/
+.idea/
+
+# --- Publish boundary (ADR-2 / P1): internal AI-DLC records must NEVER be
+# published to this public repo. Defense-in-depth in addition to the fact that
+# these live in the separate internal workspace. ---
+aidlc/
+**/audit/
+.kiro/
+*.diagnostic*

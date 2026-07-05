@@ -1,0 +1,27 @@
+{
+  "name": "aidlc-dojo-site",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "AI-DLC DOJO 静的学習サイトのコードとコンテンツ(公開リポジトリ)",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "lint": "prettier --check . && eslint .",
+    "format": "prettier --write .",
+    "test": "vitest run --coverage",
+    "test:watch": "vitest",
+    "build": "node scripts/build-placeholder.mjs"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@vitest/coverage-v8": "4.1.9",
+    "eslint": "10.6.0",
+    "prettier": "3.9.4",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.62.1",
+    "vitest": "4.1.9",
+    "yaml": "2.9.0"
+  }
+}

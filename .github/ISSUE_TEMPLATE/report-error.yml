@@ -1,0 +1,32 @@
+name: 誤りの報告
+description: 教材内容の誤り(事実誤認・古い情報・誤字など)を報告します。
+title: '[誤り報告] '
+labels: [bug-content]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        教材の信頼性維持にご協力ありがとうございます。出典に基づく修正判断のため、可能な範囲で情報をお寄せください。
+        個人情報(氏名・メールアドレス・電話番号など)は入力しないでください。
+  - type: input
+    id: unit-url
+    attributes:
+      label: 該当単元URL
+      description: 誤りがある単元ページのURL
+      placeholder: https://<owner>.github.io/aidlc-dojo-site/units/...
+    validations:
+      required: true
+  - type: textarea
+    id: error-detail
+    attributes:
+      label: 誤りの内容
+      description: どの記述が、どのように誤っているかを具体的に記載してください。
+    validations:
+      required: true
+  - type: input
+    id: evidence-url
+    attributes:
+      label: 根拠URL(公式ドキュメント等・任意)
+      description: 正しいと考える根拠となる公式ドキュメント等のURL(任意)。
+    validations:
+      required: false

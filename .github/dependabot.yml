@@ -1,0 +1,12 @@
+version: 2
+updates:
+  # Supply-chain (SEC-6/SEC-7): keep SHA-pinned actions current.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+  # Dependency updates for pinned devDependencies.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
