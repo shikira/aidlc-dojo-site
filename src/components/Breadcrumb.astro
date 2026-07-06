@@ -1,0 +1,23 @@
+---
+// Breadcrumb — path-context trail (帯 > 単元). Used by UnitNav in path mode.
+// Not part of the frozen props contract (internal to UnitNav composition).
+import { t } from '../i18n/t';
+import type { Belt } from './contracts';
+
+interface Props {
+  belt: Belt;
+  beltNameJa: string;
+  beltHref: string;
+  unitTitle: string;
+}
+
+const { beltNameJa, beltHref, unitTitle } = Astro.props;
+---
+
+<nav class="breadcrumb" aria-label={t('nav.breadcrumb.aria')}>
+  <ol>
+    <li><a href="/">{t('site.name')}</a></li>
+    <li><a href={beltHref}>{beltNameJa}</a></li>
+    <li aria-current="page">{unitTitle}</li>
+  </ol>
+</nav>

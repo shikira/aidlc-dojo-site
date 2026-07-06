@@ -1,0 +1,21 @@
+---
+// 404 — the only runtime error surface (business-logic-model 404 flow). All
+// other errors are excluded at build time. Copy is t()-based; recovery links
+// return the visitor to the top and the path index.
+import SharedLayout from '../layouts/SharedLayout.astro';
+import { t } from '../i18n/t';
+---
+
+<SharedLayout
+  title={t('error.404.title')}
+  description={t('error.404.description')}
+>
+  <section class="error-page">
+    <h1>{t('error.404.h1')}</h1>
+    <p>{t('error.404.body')}</p>
+    <ul>
+      <li><a href="/">{t('error.404.recover.home')}</a></li>
+      <li><a href="/paths/white/">{t('error.404.recover.paths')}</a></li>
+    </ul>
+  </section>
+</SharedLayout>

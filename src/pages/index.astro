@@ -1,0 +1,17 @@
+---
+// Home page — minimal top (skeleton). UW-04 replaces this with the real belt
+// selection / three-door top. Enough here to prove the shell builds.
+import SharedLayout from '../layouts/SharedLayout.astro';
+import { t } from '../i18n/t';
+---
+
+<SharedLayout
+  title={t('page.home.title')}
+  description={t('page.home.description')}
+  canonicalUrl="https://aidlc-dojo.dev/"
+>
+  <section class="hero">
+    <h1>{t('page.home.h1')}</h1>
+    <p>{t('page.home.intro')}</p>
+  </section>
+</SharedLayout>

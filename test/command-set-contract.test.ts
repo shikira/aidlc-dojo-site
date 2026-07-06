@@ -28,8 +28,16 @@ describe('command-set contract (package.json)', () => {
     expect(pkg.scripts?.test).toBe('vitest run --coverage');
   });
 
-  it('defines the build command as the placeholder script', () => {
-    expect(pkg.scripts?.build).toBe('node scripts/build-placeholder.mjs');
+  it('defines the build command as the real Astro build (UW-01)', () => {
+    // UW-06a shipped a placeholder build; UW-01 replaces it with `astro build`.
+    // The stable command NAME (`build`) is preserved per the command-set
+    // contract — only the implementation behind it changed.
+    expect(pkg.scripts?.build).toBe('astro build');
+  });
+
+  it('defines dev and preview as Astro commands', () => {
+    expect(pkg.scripts?.dev).toBe('astro dev');
+    expect(pkg.scripts?.preview).toBe('astro preview');
   });
 
   it('provides the auxiliary format and watch commands', () => {
@@ -38,15 +46,22 @@ describe('command-set contract (package.json)', () => {
   });
 });
 
-describe('build is a bootstrap placeholder (replaced by UW-01)', () => {
-  const placeholder = readFileSync('scripts/build-placeholder.mjs', 'utf8');
+describe('Astro scaffold toolchain (UW-01)', () => {
+  const required = [
+    'astro',
+    '@astrojs/check',
+    'eslint-plugin-astro',
+    'prettier-plugin-astro',
+  ];
 
-  it('logs the placeholder marker so it is not mistaken for a permanent empty gate', () => {
-    expect(placeholder).toContain('bootstrap placeholder — replaced by UW-01');
+  it('adds the Astro build + type-check + lint/format toolchain', () => {
+    for (const dep of required) {
+      expect(pkg.devDependencies?.[dep]).toBeDefined();
+    }
   });
 
-  it('exits 0 so the empty container stays green', () => {
-    expect(placeholder).toContain('process.exit(0)');
+  it('pins Astro to an exact 5.x version', () => {
+    expect(pkg.devDependencies?.astro).toMatch(/^5\.\d+\.\d+$/);
   });
 });
 

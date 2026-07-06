@@ -1,0 +1,28 @@
+---
+// TocDisclosure (C9) — h2 table of contents via NATIVE details/summary.
+// No client JS (NFR-2). Entries are supplied at build time (UW-02 section
+// extractor / BV-2 single source). Scroll-linked aria-current is out of R1
+// scope (functional-design approved deviation — would need an Intersection
+// Observer, violating the JS inventory S1).
+import { t } from '../i18n/t';
+import type { TocDisclosureProps } from './contracts';
+
+type Props = TocDisclosureProps;
+
+const { entries } = Astro.props;
+---
+
+{
+  entries.length > 0 && (
+    <details class="toc-disclosure" open>
+      <summary>{t('toc.disclosure.summary')}</summary>
+      <ol aria-label={t('toc.disclosure.aria')}>
+        {entries.map((entry) => (
+          <li>
+            <a href={`#${entry.anchorId}`}>{entry.text}</a>
+          </li>
+        ))}
+      </ol>
+    </details>
+  )
+}
