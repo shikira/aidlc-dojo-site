@@ -1,0 +1,70 @@
+---
+// UnitNav (C5) — unit navigation. Discriminated union of two variants:
+//   - path      : prev/next links + head-note / graduation banner (4 states,
+//                 selected by `state.position`) + "back to path".
+//   - canonical : no breadcrumb; a "paths containing this unit" card (FR-1.4).
+// Breadcrumb is a sibling component (the page supplies the unit title).
+import { t } from '../i18n/t';
+import type { UnitNavProps } from './contracts';
+
+type Props = UnitNavProps;
+
+const { state } = Astro.props;
+---
+
+{
+  state.mode === 'canonical' ? (
+    <section
+      class="unit-nav unit-nav--canonical"
+      aria-label={t('nav.unitnav.aria')}
+    >
+      <h2>{t('nav.unitnav.canonicalHeading')}</h2>
+      <ul>
+        {state.pathsContaining.map((path) => (
+          <li>
+            <a href={path.href}>{path.nameJa}</a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  ) : (
+    <nav
+      class="unit-nav"
+      data-position={state.position}
+      aria-label={t('nav.unitnav.aria')}
+    >
+      {(state.position === 'first' || state.position === 'only') && (
+        <p class="unit-nav__note">{t('nav.unitnav.first')}</p>
+      )}
+
+      <div class="unit-nav__links">
+        {state.prev && (
+          <a class="unit-nav__prev" rel="prev" href={state.prev.href}>
+            <span class="unit-nav__dir">{t('nav.unitnav.prev')}</span>
+            <span class="unit-nav__title">{state.prev.title}</span>
+          </a>
+        )}
+        {state.next && (
+          <a class="unit-nav__next" rel="next" href={state.next.href}>
+            <span class="unit-nav__dir">{t('nav.unitnav.next')}</span>
+            <span class="unit-nav__title">{state.next.title}</span>
+          </a>
+        )}
+      </div>
+
+      {(state.position === 'last' || state.position === 'only') && (
+        <aside class="unit-nav__graduation" data-belt={state.belt}>
+          <p class="unit-nav__graduation-title">
+            {t('nav.unitnav.graduation')}
+          </p>
+          <p>{t('nav.unitnav.graduationHint')}</p>
+          <p class="unit-nav__belt-name">{state.beltNameJa}</p>
+        </aside>
+      )}
+
+      <a class="unit-nav__back" href={state.pathHref}>
+        {t('nav.unitnav.backToPath')}
+      </a>
+    </nav>
+  )
+}

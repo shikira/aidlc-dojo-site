@@ -8,17 +8,25 @@
     "node": ">=20"
   },
   "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
     "lint": "prettier --check . && eslint .",
     "format": "prettier --write .",
     "test": "vitest run --coverage",
-    "test:watch": "vitest",
-    "build": "node scripts/build-placeholder.mjs"
+    "test:watch": "vitest"
   },
   "devDependencies": {
+    "@astrojs/check": "0.9.9",
     "@eslint/js": "10.0.1",
+    "@types/node": "26.1.0",
     "@vitest/coverage-v8": "4.1.9",
+    "astro": "5.18.2",
     "eslint": "10.6.0",
+    "eslint-plugin-astro": "2.1.1",
     "prettier": "3.9.4",
+    "prettier-plugin-astro": "0.14.1",
     "typescript": "6.0.3",
     "typescript-eslint": "8.62.1",
     "vitest": "4.1.9",

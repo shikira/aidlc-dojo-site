@@ -1,0 +1,127 @@
+---
+// SharedLayout (UI-7) — the page shell every route composes.
+//
+// Structure (business-logic-model page shell / A-1..A-3, A-8, S5):
+//   skip link → header(banner: logo / nav / lang-seat / theme) → main → footer
+//   (contentinfo) → SM-3 auth reserved seat (R1 renders NOTHING).
+// Exactly one of each landmark (banner / nav / main / contentinfo); lang="ja".
+//
+// SEC-1: the sha256 of the EXACT inline-script bytes is computed at build time
+// and pinned in a <meta http-equiv> CSP. The inline script is injected verbatim
+// before paint (FOUC prevention, REL-2) and is the ONLY client JS (S1).
+import '../styles/tokens.css';
+import { INLINE_SCRIPT } from '../theme-init';
+import { buildCsp, scriptSha256 } from '../lib/csp';
+import { t } from '../i18n/t';
+import { reportErrorUrl } from '../config';
+import type { SharedLayoutProps } from '../components/contracts';
+
+type Props = SharedLayoutProps;
+
+const { title, description, canonicalUrl } = Astro.props;
+
+const csp = buildCsp(scriptSha256(INLINE_SCRIPT));
+const reportUrl = reportErrorUrl();
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Content-Security-Policy" content={csp} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+    {
+      /* FOUC prevention (REL-2): the ONLY client JS (S1), inlined before paint.
+        CSP allows it by the sha256 computed above over these exact bytes. */
+    }
+    <script is:inline set:html={INLINE_SCRIPT} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">{t('nav.skip.toMain')}</a>
+
+    <header class="site-header" role="banner">
+      <a class="site-logo" href="/" data-testid="site-logo">{t('site.name')}</a>
+
+      <nav class="global-nav" aria-label={t('nav.global.aria')}>
+        <a href="/paths/white/" data-testid="nav-path-white"
+          >{t('nav.global.pathWhite')}</a
+        >
+        <a href="/paths/yellow/" data-testid="nav-path-yellow"
+          >{t('nav.global.pathYellow')}</a
+        >
+        <a href="/paths/black/" data-testid="nav-path-black"
+          >{t('nav.global.pathBlack')}</a
+        >
+        <a href="/about/ai-dlc/" data-testid="nav-about"
+          >{t('nav.global.about')}</a
+        >
+      </nav>
+
+      <div class="header-actions">
+        {
+          /* C7 LangSwitch — EN reserved seat: aria-disabled but kept in tab
+            order (A-8/A12). No `disabled` attr (that would remove it). */
+        }
+        <button
+          type="button"
+          class="lang-switch"
+          aria-disabled="true"
+          aria-label={t('nav.lang.aria')}
+          data-testid="lang-switch"
+        >
+          {t('nav.lang.enReserved')}
+        </button>
+
+        {
+          /* C6 ThemeToggle — 3-value. State lives in data-theme + localStorage;
+            the inline script cycles/persists and swaps in these localized
+            labels (S2 — no hardcoded UI strings in client JS). */
+        }
+        <button
+          type="button"
+          class="theme-toggle"
+          data-theme-toggle
+          data-testid="theme-toggle"
+          aria-label={t('theme.toggle.system')}
+          data-label-system={t('theme.toggle.system')}
+          data-label-light={t('theme.toggle.light')}
+          data-label-dark={t('theme.toggle.dark')}
+        >
+          <span data-theme-label>{t('theme.toggle.system')}</span>
+        </button>
+      </div>
+    </header>
+
+    <main id="main-content">
+      <slot />
+    </main>
+
+    <footer class="site-footer" role="contentinfo">
+      <p class="unofficial-notice">{t('footer.unofficial')}</p>
+      <ul class="footer-links">
+        <li><a href="/about/">{t('footer.link.about')}</a></li>
+        <li><a href="/sources/">{t('footer.link.sources')}</a></li>
+        <li><a href="/policy/">{t('footer.link.policy')}</a></li>
+        <li><a href="/roadmap/">{t('footer.link.roadmap')}</a></li>
+        <li>
+          <a
+            href={reportUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-testid="footer-report-link">{t('footer.link.report')}</a
+          >
+        </li>
+      </ul>
+    </footer>
+
+    {
+      /* SM-3 auth reserved seat (S5 / NFR-5 / SEC-4): R1 renders NOTHING — the
+        slot is intentionally absent from the DOM, AOM, and tab order. R2 will
+        inject the auth UI here. This comment is the placeholder; no element. */
+    }
+  </body>
+</html>
