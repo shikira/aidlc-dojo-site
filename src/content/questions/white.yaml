@@ -1,0 +1,79 @@
+# SEED SAMPLE (UW-02) — CT-3 question pool for the white belt (帯ごと1ファイル).
+# 3 questions per unit, one after each h2 section. sourceUrl は uw-07
+# finalized-unit-list の検証済み v2 URL(SHA b67798c 固定)。到達性は検証しない(Q5)。
+# afterSection は各単元の h2 見出しの slug(slugify 済み)と一致させる。
+
+# --- what-is-aidlc ---
+- id: q-what-is-aidlc-1
+  unitId: what-is-aidlc
+  afterSection: ai-dlcとは
+  prompt: AI-DLC の基本原則として正しいものはどれですか。
+  choices:
+    - AI が意思決定し、人間が実行する
+    - 人間が意思決定し、AI が実行する
+    - すべて人間が手作業で行う
+  answerIndex: 1
+  explanation: AI-DLC の原則は「User decides, AI executes」— 人間が意思決定し AI が実行します。
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/core/knowledge/aidlc-shared/ai-dlc-principles.md
+
+- id: q-what-is-aidlc-2
+  unitId: what-is-aidlc
+  afterSection: 5つのフェーズ
+  prompt: AI-DLC の5フェーズに含まれないものはどれですか。
+  choices:
+    - Initialization
+    - Ideation
+    - Construction
+    - Marketing
+  answerIndex: 3
+  explanation: 5フェーズは Initialization / Ideation / Inception / Construction / Operation です。Marketing は含まれません。
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/guide/04-phases-and-stages.md
+
+- id: q-what-is-aidlc-3
+  unitId: what-is-aidlc
+  afterSection: engineとconductor
+  prompt: Engine と Conductor の役割の説明として正しいものはどれですか。
+  choices:
+    - Engine は決定的なツール群、Conductor はオーケストレーションを担う LLM
+    - Engine は LLM、Conductor は決定的なツール群
+    - どちらも同じ LLM の別名
+  answerIndex: 0
+  explanation: Engine は決定的なツール群として状態や監査ログを管理し、Conductor(LLM)がプロトコルに沿って作業を進めます。
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/guide/00-introduction.md
+
+# --- gates-and-human-oversight ---
+- id: q-gates-1
+  unitId: gates-and-human-oversight
+  afterSection: 承認ゲートの考え方
+  prompt: 承認ゲートで人間ができるアクションはどれですか。
+  choices:
+    - 承認(Approve)または変更要求(Request Changes)
+    - 承認のみ
+    - 何もできない
+  answerIndex: 0
+  explanation: ゲートでは人間が Approve するか Request Changes を選びます。重要な意思決定は人間が行います。
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/guide/02-your-first-workflow.md
+
+- id: q-gates-2
+  unitId: gates-and-human-oversight
+  afterSection: trimodeの質問フロー
+  prompt: Tri-Mode の質問フローに含まれるモードはどれですか。
+  choices:
+    - Guide Me / Edit File / Chat
+    - 音声入力のみ
+    - 自動承認のみ
+  answerIndex: 0
+  explanation: Guide Me・Edit File・Chat の3モードから状況に応じて入力方法を選べます。
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/guide/07-interaction-modes.md
+
+- id: q-gates-3
+  unitId: gates-and-human-oversight
+  afterSection: 3ストライク離脱
+  prompt: 3ストライク離脱の仕組みの目的として正しいものはどれですか。
+  choices:
+    - 同じゲートでの変更要求が続いたときに堂々巡りを避ける
+    - テストを自動でスキップする
+    - デプロイを高速化する
+  answerIndex: 0
+  explanation: 変更要求が3回続くとリビジョンループから離脱し、根本的な方針の見直しを促します。
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/guide/11-session-management.md

@@ -22,6 +22,11 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       include: ['src/**/*.ts'],
+      // src/content.config.ts imports `astro:content` (only resolvable inside
+      // the Astro build), so it is not unit-testable here — it is validated by
+      // `astro build` / `astro check` instead. Exclude it from coverage rather
+      // than let an unreachable file drag the threshold down.
+      exclude: ['src/content.config.ts'],
       // Count every application source file once src exists, so untested files
       // pull coverage below the threshold instead of hiding.
       all: true,

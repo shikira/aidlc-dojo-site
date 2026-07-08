@@ -1,0 +1,8 @@
+# V-NEG fixture for BV-5: unitIds references a unit that does not exist.
+belt: white
+nameJa: 白帯パス
+nameEn: White Belt
+audience: foundational
+unitIds:
+  - real-unit
+  - does-not-exist

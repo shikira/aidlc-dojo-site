@@ -22,19 +22,21 @@ describe('CI workflow triggers', () => {
 });
 
 describe('ci-gate aggregate check', () => {
-  it('defines lint, test, build and ci-gate jobs', () => {
+  it('defines lint, test, build, bv and ci-gate jobs', () => {
     const jobs = workflow.jobs ?? {};
     expect(jobs.lint).toBeDefined();
     expect(jobs.test).toBeDefined();
     expect(jobs.build).toBeDefined();
+    expect(jobs.bv).toBeDefined();
     expect(jobs['ci-gate']).toBeDefined();
   });
 
-  it('has ci-gate depend on exactly [lint, test, build]', () => {
+  it('has ci-gate depend on exactly [lint, test, build, bv]', () => {
     expect(workflow.jobs?.['ci-gate']?.needs).toEqual([
       'lint',
       'test',
       'build',
+      'bv',
     ]);
   });
 });
@@ -50,9 +52,8 @@ describe('security posture', () => {
   });
 });
 
-describe('bv merge-point reservation', () => {
-  it('reserves the bv join point in a comment', () => {
-    expect(raw).toContain('bv: reserved');
-    expect(raw).toContain('append to ci-gate needs');
+describe('bv gate wiring (UW-02)', () => {
+  it('runs the bv command in the bv job', () => {
+    expect(raw).toContain('npm run bv');
   });
 });
