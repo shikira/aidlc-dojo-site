@@ -1,0 +1,9 @@
+# SEED SAMPLE (UW-02) — CT-2 path definition. 本番の帯/単元割当は uw-07 写像表に従い
+# UW-08〜10 が拡張する。単元は自分の所属パスを知らない(Q4)— この unitIds が唯一の紐付け。
+belt: white
+nameJa: 白帯パス
+nameEn: White Belt
+audience: foundational
+unitIds:
+  - what-is-aidlc
+  - gates-and-human-oversight

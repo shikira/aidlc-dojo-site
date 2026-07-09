@@ -1,0 +1,12 @@
+# V-NEG fixture for BV-2: only one question for a unit that needs 3–8 and has
+# two sections, so both the count rule and the section-coverage rule fail.
+- id: q-bad-1
+  unitId: bad-questions
+  afterSection: 最初のセクション
+  prompt: これは有効な単問ですが、数が足りません。
+  choices:
+    - はい
+    - いいえ
+  answerIndex: 0
+  explanation: 単一の問題では BV-2 の下限(3問)を満たしません。
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/README.md
