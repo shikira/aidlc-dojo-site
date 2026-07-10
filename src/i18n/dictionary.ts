@@ -85,6 +85,28 @@ export const dictionary: Record<Locale, Record<string, string>> = {
       'お探しのページは移動または削除された可能性があります。以下から目的のページへお進みください。',
     'error.404.recover.home': 'トップページへ戻る',
     'error.404.recover.paths': '学習パス一覧を見る',
+
+    // quiz island (C1 / UW-03) — passed to QuizBlock via props (I3). Symbols
+    // are the 記号 third of the 3-fold correctness signal (I6).
+    'quiz.action.submit': '回答する',
+    'quiz.action.retry': 'もう一度回答する',
+    'quiz.result.correct': '正解',
+    'quiz.result.incorrect': '不正解',
+    'quiz.symbol.correct': '○',
+    'quiz.symbol.incorrect': '✕',
+    'quiz.label.explanation': '解説',
+    'quiz.label.source': '出典',
+    'quiz.label.external': '(外部サイト)',
+    'quiz.noscript.message':
+      'この問題に答えるには JavaScript を有効にしてください。本文は JavaScript なしでも読めます。',
+
+    // quiz construction demo (temporary — UW-04 owns real page composition).
+    'page.quizdemo.title': 'QuizBlock デモ(構築用) — AI-DLC DOJO',
+    'page.quizdemo.description':
+      'UW-03 QuizBlock アイランドの構築用デモページ。UW-04 のページ構成で置き換えられます。',
+    'page.quizdemo.heading': 'QuizBlock デモ(構築用)',
+    'page.quizdemo.note':
+      'このページは UW-03 の島をビルドさせるための一時的な検証用ページです。UW-04 のページ構成で置き換えられます。',
   },
   en: {
     // Reserved (R4). Populated with the SAME key set as `ja`. Empty for R1.

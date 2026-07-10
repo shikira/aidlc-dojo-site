@@ -1,0 +1,8 @@
+[
+  {
+    "name": "QuizBlock island client bundle (gzip)",
+    "path": "dist/_astro/*.js",
+    "limit": "10 KB",
+    "gzip": true
+  }
+]

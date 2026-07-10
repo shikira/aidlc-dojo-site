@@ -22,21 +22,23 @@ describe('CI workflow triggers', () => {
 });
 
 describe('ci-gate aggregate check', () => {
-  it('defines lint, test, build, bv and ci-gate jobs', () => {
+  it('defines lint, test, build, bv, size and ci-gate jobs', () => {
     const jobs = workflow.jobs ?? {};
     expect(jobs.lint).toBeDefined();
     expect(jobs.test).toBeDefined();
     expect(jobs.build).toBeDefined();
     expect(jobs.bv).toBeDefined();
+    expect(jobs.size).toBeDefined();
     expect(jobs['ci-gate']).toBeDefined();
   });
 
-  it('has ci-gate depend on exactly [lint, test, build, bv]', () => {
+  it('has ci-gate depend on exactly [lint, test, build, bv, size]', () => {
     expect(workflow.jobs?.['ci-gate']?.needs).toEqual([
       'lint',
       'test',
       'build',
       'bv',
+      'size',
     ]);
   });
 });
@@ -55,5 +57,12 @@ describe('security posture', () => {
 describe('bv gate wiring (UW-02)', () => {
   it('runs the bv command in the bv job', () => {
     expect(raw).toContain('npm run bv');
+  });
+});
+
+describe('size gate wiring (UW-03 / R-B)', () => {
+  it('runs the size command in the size job (after a build)', () => {
+    expect(raw).toContain('npm run size');
+    expect(raw).toContain('npm run build');
   });
 });

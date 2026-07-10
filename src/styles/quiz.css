@@ -1,0 +1,149 @@
+/*
+ * quiz.css — GLOBAL styles for the QuizBlock island (UI-4 / S3).
+ *
+ * GLOBAL (not Astro-scoped) on purpose: the client (quizBlock.client.ts) creates
+ * the result nodes at runtime, and Astro's scoped-style attribute is only added
+ * to build-time markup — scoped rules would never reach the injected nodes.
+ * Every colour / spacing / motion value comes from a uw-01 token (I6 / S3): NO
+ * raw hex or px here. Correctness is signalled three ways (I6): the symbol glyph
+ * (--symbol), the text label (--text), and the colour token — none depends on
+ * the animation or the theme.
+ */
+
+.quiz-block {
+  margin: var(--space-6) 0;
+  padding: var(--space-5);
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.quiz-block__fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.quiz-block__legend {
+  padding: 0;
+  margin-bottom: var(--space-3);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  line-height: var(--line-height-tight);
+}
+
+.quiz-block__choice {
+  display: flex;
+  gap: var(--space-2);
+  align-items: baseline;
+  padding: var(--space-2) var(--space-3);
+  margin-bottom: var(--space-2);
+  background: var(--color-bg);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.quiz-block__choice input[type='radio'] {
+  margin: 0;
+  accent-color: var(--accent);
+}
+
+.quiz-block__submit,
+.quiz-block__retry {
+  margin-top: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  font: inherit;
+  color: var(--accent-contrast);
+  background: var(--accent);
+  border: var(--border-width) solid transparent;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.quiz-block__submit[disabled] {
+  color: var(--color-muted);
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  cursor: not-allowed;
+}
+
+.quiz-block__result {
+  margin-top: var(--space-4);
+}
+
+.quiz-block__result:empty {
+  margin-top: 0;
+}
+
+.quiz-result__status {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  margin: 0 0 var(--space-3);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  /* focus target on the terminal (correct) state — keep the 2px accent ring */
+  outline-offset: var(--focus-offset);
+}
+
+/* Colour — the third correctness signal (I6). Both themes inherit the token. */
+.quiz-result__status--correct {
+  color: var(--color-correct);
+}
+
+.quiz-result__status--incorrect {
+  color: var(--color-incorrect);
+}
+
+.quiz-result__symbol {
+  display: inline-flex;
+  font-size: var(--font-size-xl);
+  line-height: 1;
+}
+
+/* 96ms scale(1 → 1.04 → 1) check pop on a correct answer (FR-2.3). Added by JS
+ * ONLY when the user has NOT requested reduced motion (QA7); the media query
+ * below is the CSS backstop even if the class is present. */
+@keyframes quiz-check-pop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.04);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.quiz-result__symbol--animate {
+  animation: quiz-check-pop 96ms ease-in-out;
+}
+
+.quiz-result__detail {
+  color: var(--color-fg);
+  font-size: var(--font-size-base);
+}
+
+.quiz-result__explanation,
+.quiz-result__source {
+  margin: 0 0 var(--space-2);
+}
+
+.quiz-result__label {
+  font-weight: 700;
+  margin-inline-end: var(--space-2);
+}
+
+.quiz-result__external-note {
+  color: var(--color-muted);
+  font-size: var(--font-size-sm);
+}
+
+/* QA7 / A8 backstop: honour reduced motion regardless of the JS gate. */
+@media (prefers-reduced-motion: reduce) {
+  .quiz-result__symbol--animate {
+    animation: none;
+  }
+}
