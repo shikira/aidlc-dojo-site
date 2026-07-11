@@ -1,0 +1,58 @@
+---
+// S5 — プライバシーポリシー (/privacy/). Discloses the collection contract
+// C-3 (a) no cookies (b) no personal identification (c) aggregate metrics only
+// (d) no registration in R1 = no personal data, the FILLED cookieless analytics
+// method (C-3a — CDN/edge access-log aggregation, no tracking JS on the page,
+// no cookies, no personal identification), and the R2 notice (C-4). Also states
+// the unofficial-site disclosure (C-1). All text routes through t() (NFR-9).
+import SharedLayout from '../layouts/SharedLayout.astro';
+import { t } from '../i18n/t';
+import { SITE_ORIGIN } from '../config';
+---
+
+<SharedLayout
+  title={t('page.privacy.title')}
+  description={t('page.privacy.description')}
+  canonicalUrl={`${SITE_ORIGIN}/privacy/`}
+>
+  <article class="page">
+    <h1>{t('page.privacy.h1')}</h1>
+    <p>{t('page.privacy.intro')}</p>
+    <p>{t('page.privacy.unofficial')}</p>
+
+    <section aria-labelledby="privacy-collect">
+      <h2 id="privacy-collect">{t('page.privacy.collect.heading')}</h2>
+      <ul>
+        <li>{t('page.privacy.collect.cookies')}</li>
+        <li>{t('page.privacy.collect.noPii')}</li>
+        <li>{t('page.privacy.collect.aggregate')}</li>
+        <li>{t('page.privacy.collect.noRegistration')}</li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="privacy-analytics">
+      <h2 id="privacy-analytics">{t('page.privacy.analytics.heading')}</h2>
+      <p>{t('page.privacy.analytics.method')}</p>
+    </section>
+
+    <section aria-labelledby="privacy-r2">
+      <h2 id="privacy-r2">{t('page.privacy.r2.heading')}</h2>
+      <p>{t('page.privacy.r2.body')}</p>
+      <p><a href="/roadmap/#terms">{t('page.privacy.r2.linkLabel')}</a></p>
+    </section>
+  </article>
+</SharedLayout>
+
+<style>
+  .page > p {
+    margin: 0 0 var(--space-4);
+  }
+
+  section {
+    margin-top: var(--space-6);
+  }
+
+  section li {
+    margin-bottom: var(--space-2);
+  }
+</style>

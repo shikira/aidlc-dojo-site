@@ -107,6 +107,181 @@ export const dictionary: Record<Locale, Record<string, string>> = {
     'page.quizdemo.heading': 'QuizBlock デモ(構築用)',
     'page.quizdemo.note':
       'このページは UW-03 の島をビルドさせるための一時的な検証用ページです。UW-04 のページ構成で置き換えられます。',
+    // ===================================================================
+    // UW-05 静的ページ群 (S4〜S7). All rendered text routes through t() so no
+    // Japanese string is hardcoded in .astro/.ts sources (BV-4 / NFR-9). Body
+    // prose lives here (not inline) for the same reason and for owner review.
+    // ===================================================================
+
+    // shared — external-link note (A-6 / SEC-7)
+    'link.external.note': '(外部サイト)',
+
+    // version tag (C4 — v1/v2/共通; colour + text, never colour-only S-4)
+    'version.tag.v1': 'v1',
+    'version.tag.v2': 'v2',
+    'version.tag.common': '共通',
+    'version.tag.label': 'バージョン',
+
+    // S4 — AI-DLCとは (/what-is-aidlc/)
+    'page.whatis.title': 'AI-DLCとは — AI-DLC DOJO',
+    'page.whatis.description':
+      'AI駆動開発ライフサイクル(AI-DLC)の考え方を、これから学ぶ人向けにやさしく紹介します。',
+    'page.whatis.h1': 'AI-DLCとは',
+    'page.whatis.intro.p1':
+      'AI-DLC(AI-Driven Development Life Cycle / AI駆動開発ライフサイクル)は、要件定義から設計・実装・運用までの開発工程を、AIエージェントと人が協働しながら段階的に進めるための進め方です。各工程には人が確認・承認する「ゲート」があり、AIが提案し人が判断する形で進みます。',
+    'page.whatis.intro.p2':
+      'この道場(DOJO)では、AI-DLCの考え方を「帯(レベル)」に分けて学びます。白帯で全体像と基本用語をつかみ、上位の帯で設計判断や運用の勘所へと踏み込んでいきます。',
+    'page.whatis.intro.p3':
+      '各単元は短時間で読める分量にまとまっており、区切りごとに理解度を確認するクイズが用意されています。読み進めながら、自分のペースで手を動かして学べます。',
+    'page.whatis.cta.heading': 'さっそく始める',
+    'page.whatis.cta.body':
+      '準備ができたら、帯を選んで学習を始めましょう。まずは白帯パスがおすすめです。',
+    'page.whatis.cta.pathsLink': '白帯パスから始める',
+    'page.whatis.cta.homeLink': 'トップで帯を選ぶ',
+
+    // S5 — このサイトについて (/about/)
+    'page.about.title': 'このサイトについて — AI-DLC DOJO',
+    'page.about.description':
+      'AI-DLC DOJO の目的と成り立ち、そして本サイトが非公式のコミュニティ学習サイトである旨をご説明します。',
+    'page.about.h1': 'このサイトについて',
+    'page.about.intro.p1':
+      'AI-DLC DOJO は、AI駆動開発ライフサイクル(AI-DLC)を帯(レベル)ごとに学べる学習サイトです。体系立てて少しずつ学べるよう、単元とクイズ、学習パスを用意しています。',
+    'page.about.intro.p2':
+      'コンテンツは日本語で提供しています。英語版(EN)は今後の対応予定で、現在は準備中です。',
+    'page.about.unofficial.heading': '非公式サイトであることについて',
+    'page.about.unofficial.body':
+      '本サイトは有志による非公式のコミュニティ学習サイトです。AWS または awslabs が公式に提供・監修・保証するものではありません。掲載内容は学習目的で再構成したものであり、公式見解を表すものではありません。',
+    'page.about.related.heading': '関連ページ',
+    'page.about.related.whatis': 'AI-DLCとは',
+    'page.about.related.credits': '出典・免責',
+    'page.about.related.privacy': 'プライバシーポリシー',
+    'page.about.related.roadmap': 'ロードマップ',
+
+    // S5 — 出典・免責 (/credits/)
+    'page.credits.title': '出典・免責 — AI-DLC DOJO',
+    'page.credits.description':
+      '本サイトの教材・問題の出典(awslabs/aidlc-workflows, MIT-0)と、内容に関する免責事項を記載します。',
+    'page.credits.h1': '出典・免責',
+    'page.credits.intro':
+      '本サイトのコンテンツが依拠している出典と、その利用条件・免責事項をまとめています。',
+    'page.credits.sources.heading': '出典',
+    'page.credits.sources.body':
+      '本サイトの教材および問題は、awslabs が公開する AI-DLC ワークフロー(awslabs/aidlc-workflows)を主な出典とし、学習用に再構成・要約しています。',
+    'page.credits.sources.linkLabel': 'awslabs/aidlc-workflows(GitHub)',
+    'page.credits.sources.license':
+      'awslabs/aidlc-workflows は MIT-0 ライセンスの下で公開されています。',
+    'page.credits.license.heading': 'ライセンス表記(MIT-0)',
+    'page.credits.license.body':
+      'MIT No Attribution(MIT-0)ライセンスは、著作権表示を保持する義務なく、複製・改変・再配布・商用利用を許可するものです。本サイトはこの許諾に基づき出典コンテンツを再構成して掲載していますが、感謝と透明性のため、出典として awslabs/aidlc-workflows を明記しています。',
+    'page.credits.disclaimer.heading': '免責事項',
+    'page.credits.disclaimer.unofficial':
+      '本サイトは非公式のコミュニティ学習サイトであり、AWS/awslabs の公式提供物ではありません。',
+    'page.credits.disclaimer.accuracy':
+      '掲載内容の正確性・最新性は保証されません。内容は予告なく変更されることがあります。実際の利用にあたっては、必ず一次情報(公式ドキュメントやリポジトリ)をご確認ください。本サイトの利用により生じたいかなる損害についても責任を負いかねます。',
+
+    // S5 — プライバシーポリシー (/privacy/)
+    'page.privacy.title': 'プライバシーポリシー — AI-DLC DOJO',
+    'page.privacy.description':
+      '本サイトが収集する情報・収集しない情報、クッキーレスなアクセス解析の方式、今後の予定を開示します。',
+    'page.privacy.h1': 'プライバシーポリシー',
+    'page.privacy.intro':
+      '本サイトにおける情報の取り扱いについて、以下のとおり開示します。',
+    'page.privacy.unofficial':
+      '本サイトは非公式のコミュニティ学習サイトであり、AWS/awslabs の公式提供物ではありません。',
+    'page.privacy.collect.heading': '収集する情報・収集しない情報',
+    'page.privacy.collect.cookies': 'クッキー(Cookie)を一切発行しません。',
+    'page.privacy.collect.noPii': '個人を特定する情報は取得しません。',
+    'page.privacy.collect.aggregate':
+      '取得するのは、ページ単位の閲覧数などの集約されたアクセス指標のみです。',
+    'page.privacy.collect.noRegistration':
+      'R1(現行版)には登録機能がないため、氏名・メールアドレスなどの個人情報は一切収集・保持しません。',
+    'page.privacy.analytics.heading': 'アクセス解析の方式',
+    'page.privacy.analytics.method':
+      'アクセス解析は、CDN(エッジ)のアクセスログを集約して集計する方式で行います。ページに解析用のJavaScript(トラッキングタグ)は一切埋め込みません。クッキーを発行せず、IPアドレス等から個人を特定することもありません。集計対象は、ページビューやリファラといった集約統計に限られます。',
+    'page.privacy.r2.heading': '今後の予定(R2)',
+    'page.privacy.r2.body':
+      '将来的に、任意のアカウント登録やスコアの保存機能を追加する際には、利用規約を整備し、スコアデータの取り扱いについて本ポリシーを更新する予定です。追加時にはこのページで改めてお知らせします。',
+    'page.privacy.r2.linkLabel': 'ロードマップで今後の予定を見る',
+
+    // S6 — ロードマップ (/roadmap/)
+    'page.roadmap.title': 'ロードマップ — AI-DLC DOJO',
+    'page.roadmap.description':
+      '公開済みの機能とこれからの予定(準備中・その後)を、リリースごとにまとめたロードマップです。',
+    'page.roadmap.h1': 'ロードマップ',
+    'page.roadmap.intro':
+      '公開済みの機能と、これから取り組む予定をまとめています。各項目は、他のページから直接この位置にリンクできます。',
+    // roadmap section headings (shipped/planned/later)
+    'roadmap.section.shipped': '公開済み(R1)',
+    'roadmap.section.planned': '準備中(R2)',
+    'roadmap.section.later': 'その後(R3・R4)',
+    // roadmap status badge — colour + text + symbol (S-4)
+    'roadmap.status.shipped': '公開済み',
+    'roadmap.status.planned': '準備中',
+    'roadmap.status.later': 'その後',
+    'roadmap.status.shipped.symbol': '✓',
+    'roadmap.status.planned.symbol': '⋯',
+    'roadmap.status.later.symbol': '◇',
+    // roadmap items — R1 shipped
+    'roadmap.item.learningPaths.title': '学習パス(白・茶・黒帯)',
+    'roadmap.item.learningPaths.desc':
+      '帯(レベル)ごとに単元を並べた学習コース。白帯から順に進みます。',
+    'roadmap.item.quiz.title': '理解度クイズ',
+    'roadmap.item.quiz.desc':
+      '各単元の区切りで理解度を確認できる選択式の問題。',
+    'roadmap.item.versionTags.title': 'バージョンタグ(v1・v2・共通)',
+    'roadmap.item.versionTags.desc':
+      '教材や問題が対象とする AI-DLC のバージョンをタグで明示します。',
+    'roadmap.item.news.title': '新着・お知らせ',
+    'roadmap.item.news.desc':
+      'サイトの更新情報や新しい教材の追加をまとめて掲載します。',
+    'roadmap.item.analytics.title': 'クッキーレスなアクセス解析',
+    'roadmap.item.analytics.desc':
+      'クッキーを使わず、集約されたアクセス指標のみを把握します。',
+    // roadmap items — R2 planned
+    'roadmap.item.exam.title': '認定試験(Associate / Professional)',
+    'roadmap.item.exam.desc':
+      '腕試しのための模擬認定試験。合否とスコアを表示します。',
+    'roadmap.item.ranking.title': 'シーズンランキング',
+    'roadmap.item.ranking.desc':
+      '一定期間のスコアを集計したランキングを表示します。',
+    'roadmap.item.badges.title': '合格バッジ',
+    'roadmap.item.badges.desc':
+      '試験合格やマイルストーン達成で獲得できるバッジ。',
+    'roadmap.item.registration.title': '任意のアカウント登録(パスキー)',
+    'roadmap.item.registration.desc':
+      'パスキーによる任意登録。学習状況の保存に使います。',
+    'roadmap.item.terms.title': '利用規約',
+    'roadmap.item.terms.desc':
+      'アカウント機能の追加に合わせて整備する利用規約。',
+    // roadmap items — R3 later
+    'roadmap.item.levelCheck.title': 'レベル診断',
+    'roadmap.item.levelCheck.desc':
+      '数問の診断で、いまの理解度に合った帯をおすすめします。',
+    'roadmap.item.review.title': '間違い復習',
+    'roadmap.item.review.desc':
+      '間違えた問題だけを、あとでまとめて復習できる機能。',
+    'roadmap.item.dailyQuiz.title': 'デイリークイズ・連続記録',
+    'roadmap.item.dailyQuiz.desc':
+      '毎日出題される小問と、連続学習日数(ストリーク)の記録。',
+    'roadmap.item.sync.title': 'クロスデバイス同期',
+    'roadmap.item.sync.desc': '複数の端末で学習状況を同期します。',
+    // roadmap items — R4 later
+    'roadmap.item.i18n.title': '英語版(EN)',
+    'roadmap.item.i18n.desc':
+      'コンテンツと UI の英語対応。現在は日本語のみです。',
+
+    // S7 — 新着 (/news/ and /news/{slug}/)
+    'page.news.title': '新着 — AI-DLC DOJO',
+    'page.news.description':
+      'AI-DLC DOJO の更新情報や新しい教材の追加についてのお知らせ一覧です。',
+    'page.news.h1': '新着',
+    'news.empty.heading': 'まだ新着はありません',
+    'news.empty.message':
+      '公開後、サイトの更新情報をこちらに掲載します。それまでは学習パスからお進みください。',
+    'news.empty.linkHome': 'トップページへ',
+    'news.empty.linkPaths': '白帯パスを見る',
+    'news.breadcrumb.list': '新着',
+    'news.article.dateLabel': '公開日',
   },
   en: {
     // Reserved (R4). Populated with the SAME key set as `ja`. Empty for R1.

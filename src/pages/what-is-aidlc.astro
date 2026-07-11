@@ -1,0 +1,57 @@
+---
+// S4 — AI-DLCとは (/what-is-aidlc/). Intro content + a belt-selection CTA so the
+// reader can start after reading (R-5 / US-R1-02). All text routes through t()
+// (NFR-9 / BV-4); the CTA links to the top belt selection and the white path.
+import SharedLayout from '../layouts/SharedLayout.astro';
+import { t } from '../i18n/t';
+import { SITE_ORIGIN } from '../config';
+---
+
+<SharedLayout
+  title={t('page.whatis.title')}
+  description={t('page.whatis.description')}
+  canonicalUrl={`${SITE_ORIGIN}/what-is-aidlc/`}
+>
+  <article class="page">
+    <h1>{t('page.whatis.h1')}</h1>
+    <p>{t('page.whatis.intro.p1')}</p>
+    <p>{t('page.whatis.intro.p2')}</p>
+    <p>{t('page.whatis.intro.p3')}</p>
+
+    <section class="cta" aria-labelledby="whatis-cta-heading">
+      <h2 id="whatis-cta-heading">{t('page.whatis.cta.heading')}</h2>
+      <p>{t('page.whatis.cta.body')}</p>
+      <ul class="cta-links">
+        <li><a href="/paths/white/">{t('page.whatis.cta.pathsLink')}</a></li>
+        <li><a href="/">{t('page.whatis.cta.homeLink')}</a></li>
+      </ul>
+    </section>
+  </article>
+</SharedLayout>
+
+<style>
+  .page > p {
+    margin: 0 0 var(--space-4);
+  }
+
+  .cta {
+    margin-top: var(--space-6);
+    padding: var(--space-5);
+    background: var(--color-surface);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius);
+  }
+
+  .cta h2 {
+    margin-top: 0;
+  }
+
+  .cta-links {
+    margin: var(--space-4) 0 0;
+    padding-left: var(--space-5);
+  }
+
+  .cta-links li + li {
+    margin-top: var(--space-2);
+  }
+</style>

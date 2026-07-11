@@ -1,0 +1,66 @@
+---
+// S5 — 出典・免責 (/credits/). Source attribution to awslabs/aidlc-workflows
+// (MIT-0) with the licence note (C-2 / SEC-5), plus the unofficial-site and
+// accuracy disclaimers (C-1). The external source link carries rel=noopener +
+// an "外部サイト" note (A-6 / SEC-7). All text routes through t() (NFR-9 / BV-4);
+// the repo URL is a non-Japanese literal.
+import SharedLayout from '../layouts/SharedLayout.astro';
+import { t } from '../i18n/t';
+import { SITE_ORIGIN } from '../config';
+
+const SOURCE_REPO_URL = 'https://github.com/awslabs/aidlc-workflows';
+---
+
+<SharedLayout
+  title={t('page.credits.title')}
+  description={t('page.credits.description')}
+  canonicalUrl={`${SITE_ORIGIN}/credits/`}
+>
+  <article class="page">
+    <h1>{t('page.credits.h1')}</h1>
+    <p>{t('page.credits.intro')}</p>
+
+    <section aria-labelledby="credits-sources">
+      <h2 id="credits-sources">{t('page.credits.sources.heading')}</h2>
+      <p>{t('page.credits.sources.body')}</p>
+      <p>
+        <a href={SOURCE_REPO_URL} target="_blank" rel="noopener noreferrer">
+          {t('page.credits.sources.linkLabel')}
+          <span class="external-note">{t('link.external.note')}</span>
+        </a>
+      </p>
+      <p>{t('page.credits.sources.license')}</p>
+    </section>
+
+    <section aria-labelledby="credits-license">
+      <h2 id="credits-license">{t('page.credits.license.heading')}</h2>
+      <p>{t('page.credits.license.body')}</p>
+    </section>
+
+    <section aria-labelledby="credits-disclaimer">
+      <h2 id="credits-disclaimer">{t('page.credits.disclaimer.heading')}</h2>
+      <p>{t('page.credits.disclaimer.unofficial')}</p>
+      <p>{t('page.credits.disclaimer.accuracy')}</p>
+    </section>
+  </article>
+</SharedLayout>
+
+<style>
+  .page > p {
+    margin: 0 0 var(--space-4);
+  }
+
+  section {
+    margin-top: var(--space-6);
+  }
+
+  section p {
+    margin: 0 0 var(--space-3);
+  }
+
+  .external-note {
+    font-size: var(--font-size-sm);
+    color: var(--color-muted);
+    margin-inline-start: var(--space-1);
+  }
+</style>
