@@ -1,0 +1,124 @@
+---
+// QuizBlock.astro — the site's ONLY island (UI-4). Renders a section quiz as
+// static, accessible HTML and ships a small vanilla-TS client (quizBlock.client)
+// that Astro bundles as an EXTERNAL module — so it is covered by the uw-01 CSP
+// `script-src 'self'` with NO new inline script (JS inventory NFR-2 / I5).
+//
+// Structure (frontend-components.md): fieldset/legend(=prompt, QA1) → native
+// radios (QA2) → submit → an EMPTY aria-live result region present from first
+// paint (QA3) → retry button (revealed only when incorrect, QA4) → a <template>
+// holding the explanation+source (cloned into the result on answer) → <noscript>
+// fallback (FR-2.6). Styles are GLOBAL (quiz.css) so the client-created result
+// nodes are styled too (Astro scoped styles would miss them).
+//
+// Strings arrive via `labels` props resolved by the mounting page through t()
+// (I3); this component hardcodes none. No runtime validation (I4).
+import '../styles/quiz.css';
+import type { QuizBlockProps } from './quiz/contracts';
+
+type Props = QuizBlockProps;
+
+const {
+  questionId,
+  prompt,
+  choices,
+  answerIndex,
+  explanation,
+  sourceUrl,
+  labels,
+} = Astro.props;
+
+// Radios in one group share a name so arrow-key roving works (QA2).
+const radioName = `quiz-${questionId}`;
+---
+
+<section
+  class="quiz-block"
+  data-quiz-block
+  data-question-id={questionId}
+  data-answer-index={answerIndex}
+  data-label-correct={labels.correct}
+  data-label-incorrect={labels.incorrect}
+  data-symbol-correct={labels.correctSymbol}
+  data-symbol-incorrect={labels.incorrectSymbol}
+  data-testid="quiz-block"
+>
+  <form class="quiz-block__form" data-quiz-form data-testid="quiz-form">
+    <fieldset class="quiz-block__fieldset">
+      <legend class="quiz-block__legend">{prompt}</legend>
+      {
+        choices.map((choice, index) => (
+          <label class="quiz-block__choice">
+            <input
+              type="radio"
+              name={radioName}
+              value={index}
+              data-quiz-choice
+            />
+            <span class="quiz-block__choice-text">{choice}</span>
+          </label>
+        ))
+      }
+    </fieldset>
+    <button
+      type="submit"
+      class="quiz-block__submit"
+      disabled
+      data-quiz-submit
+      data-testid="quiz-submit">{labels.submit}</button
+    >
+  </form>
+
+  {
+    /* QA3: the aria-live region exists from first paint and starts EMPTY — the
+    client inserts the result here so it is announced (never added late). */
+  }
+  <div
+    class="quiz-block__result"
+    data-quiz-result
+    aria-live="polite"
+    data-testid="quiz-result"
+  >
+  </div>
+
+  <button
+    type="button"
+    class="quiz-block__retry"
+    hidden
+    data-quiz-retry
+    data-testid="quiz-retry">{labels.retry}</button
+  >
+
+  {
+    /* Cloned into the result region on answer. Identical for correct/incorrect
+    (business-logic-model): only the status line's symbol/text/colour differ. */
+  }
+  <template data-quiz-explanation-template>
+    <div class="quiz-result__detail">
+      <p class="quiz-result__explanation">
+        <span class="quiz-result__label">{labels.explanationLabel}</span>
+        <span class="quiz-result__explanation-text">{explanation}</span>
+      </p>
+      <p class="quiz-result__source">
+        <span class="quiz-result__label">{labels.sourceLabel}</span>
+        <a
+          class="quiz-result__source-link"
+          href={sourceUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <span class="quiz-result__source-url">{sourceUrl}</span>
+          <span class="quiz-result__external-note"> {labels.externalNote}</span>
+        </a>
+      </p>
+    </div>
+  </template>
+
+  <noscript>{labels.noscript}</noscript>
+</section>
+
+<script>
+  import { initQuizBlocks } from './quiz/quizBlock.client';
+
+  initQuizBlocks();
+</script>

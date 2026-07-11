@@ -12,4 +12,20 @@ import { defineConfig } from 'astro/config';
 export default defineConfig({
   site: 'https://aidlc-dojo.dev',
   output: 'static',
+  build: {
+    // Keep processed <script> tags as EXTERNAL module files (dist/_astro/*.js)
+    // instead of inlining them into the HTML. The QuizBlock island (UW-03) MUST
+    // load as `<script type="module" src=...>` so it is covered by the uw-01 CSP
+    // `script-src 'self'` (R-A) and so its bundle is a measurable file for the
+    // size gate (R-B). Without this, Astro inlines small island bundles, which
+    // would require a per-bundle sha256 in the CSP and leave no file to measure.
+    inlineStylesheets: 'never',
+  },
+  vite: {
+    build: {
+      // Belt-and-braces with build.inlineStylesheets: never base64-inline assets
+      // or inline tiny entry chunks, so the island script stays external.
+      assetsInlineLimit: 0,
+    },
+  },
 });

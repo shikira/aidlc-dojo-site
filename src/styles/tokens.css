@@ -34,6 +34,11 @@
   --belt-yellow: #d7a900;
   --belt-black: #2a2d33;
 
+  /* quiz correctness colours (UW-03) — the COLOUR third of the 3-fold signal
+     (I6); always paired with a symbol + text. Tuned for >= 4.5:1 on --surface. */
+  --color-correct: #116329;
+  --color-incorrect: #b42318;
+
   /* --- spacing scale --- */
   --space-0: 0;
   --space-1: 0.25rem;
@@ -77,6 +82,8 @@
   --accent: #6fb3ff;
   --accent-contrast: #0a0d12;
   --color-banner-bg: #1d222a;
+  --color-correct: #4ac26b;
+  --color-incorrect: #ff7b72;
   --belt-white: #cfd2d8;
   --belt-yellow: #ffcf3f;
   --belt-black: #0c0e12;
@@ -93,6 +100,8 @@
     --accent: #6fb3ff;
     --accent-contrast: #0a0d12;
     --color-banner-bg: #1d222a;
+    --color-correct: #4ac26b;
+    --color-incorrect: #ff7b72;
     --belt-white: #cfd2d8;
     --belt-yellow: #ffcf3f;
     --belt-black: #0c0e12;

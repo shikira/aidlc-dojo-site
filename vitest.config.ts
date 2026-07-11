@@ -1,5 +1,5 @@
 import { existsSync, readdirSync } from 'node:fs';
-import { defineConfig } from 'vitest/config';
+import { getViteConfig } from 'astro/config';
 
 // business-rules R7: the test job is pass-with-no-tests, and the 80% line
 // coverage threshold (team.md Testing Posture) only activates once application
@@ -16,7 +16,11 @@ function hasApplicationSource(): boolean {
   );
 }
 
-export default defineConfig({
+// getViteConfig wires Astro's Vite plugins into the Vitest run so `.astro`
+// components can be imported and rendered with the Container API (UW-03 uses
+// this to assert QuizBlock's <noscript> fallback). Node-based tests (fs/yaml)
+// are unaffected — the plugin only adds transforms, it does not change them.
+export default getViteConfig({
   test: {
     include: ['test/**/*.test.ts'],
     coverage: {
