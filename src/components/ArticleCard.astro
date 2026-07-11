@@ -1,0 +1,58 @@
+---
+// ArticleCard — one entry in the /news/ list (UI-6). Renders a machine-readable
+// date (<time datetime>, A-5), the title as the link (the card's onward
+// affordance — no dead-end), the VersionTag, and the body-derived excerpt. The
+// title is an <h2> under the page's single <h1> (A-1). Pure presentation; no
+// client JS.
+import { t } from '../i18n/t';
+import VersionTag from './VersionTag.astro';
+import type { Version } from '../lib/content/types';
+
+interface Props {
+  href: string;
+  title: string;
+  date: string;
+  version: Version;
+  excerpt: string;
+}
+
+const { href, title, date, version, excerpt } = Astro.props;
+---
+
+<article class="article-card">
+  <p class="article-card__meta">
+    <time datetime={date}>
+      <span class="visually-hidden">{t('news.article.dateLabel')}: </span>{date}
+    </time>
+    <VersionTag version={version} />
+  </p>
+  <h2 class="article-card__title"><a href={href}>{title}</a></h2>
+  <p class="article-card__excerpt">{excerpt}</p>
+</article>
+
+<style>
+  .article-card {
+    padding: var(--space-5) 0;
+    border-bottom: var(--border-width) solid var(--color-border);
+  }
+
+  .article-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    margin: 0 0 var(--space-2);
+    color: var(--color-muted);
+    font-size: var(--font-size-sm);
+  }
+
+  .article-card__title {
+    margin: 0 0 var(--space-2);
+    font-size: var(--font-size-lg);
+  }
+
+  .article-card__excerpt {
+    margin: 0;
+    color: var(--color-fg);
+  }
+</style>

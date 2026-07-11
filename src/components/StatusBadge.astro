@@ -1,0 +1,56 @@
+---
+// StatusBadge — roadmap status pill (shipped / planned / later). Conveys status
+// THREE ways (S-4): a colour token, a symbol, AND the text label — never
+// colour-only. The symbol is decorative (aria-hidden) because the text label
+// carries the same meaning for assistive tech. Label + symbol resolve through
+// t() (NFR-9). Tokens-only styling; no client JS.
+import { t } from '../i18n/t';
+import type { RoadmapStatus } from '../lib/roadmap';
+
+interface Props {
+  status: RoadmapStatus;
+}
+
+const { status } = Astro.props;
+const label = t(`roadmap.status.${status}`);
+const symbol = t(`roadmap.status.${status}.symbol`);
+---
+
+<span class:list={['status-badge', `status-badge--${status}`]}>
+  <span class="status-badge__symbol" aria-hidden="true">{symbol}</span>
+  {label}
+</span>
+
+<style>
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: 0 var(--space-2);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius);
+    font-size: var(--font-size-sm);
+    line-height: 1.7;
+    background: var(--color-surface);
+    color: var(--color-fg);
+    white-space: nowrap;
+  }
+
+  .status-badge--shipped {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .status-badge--planned {
+    color: var(--color-muted);
+  }
+
+  .status-badge--later {
+    color: var(--color-muted);
+    border-style: dashed;
+  }
+
+  .status-badge__symbol {
+    font-weight: 700;
+  }
+</style>

@@ -1,0 +1,42 @@
+---
+// VersionTag (C4) — v1 / v2 / 共通 tag. The version string itself is the text,
+// so status is conveyed by TEXT + colour, never colour-only (S-4). Labels
+// resolve through t() (NFR-9). UW-01 froze the `VersionTagProps` shape in
+// components/contracts.ts but shipped no component; this is UW-05's minimal,
+// tokens-only implementation. No client JS.
+import { t } from '../i18n/t';
+import type { VersionTagProps } from './contracts';
+
+type Props = VersionTagProps;
+
+const { version } = Astro.props;
+const label = t(`version.tag.${version}`);
+const contextLabel = t('version.tag.label');
+---
+
+<span class:list={['version-tag', `version-tag--${version}`]}>
+  <span class="visually-hidden">{contextLabel}: </span>{label}
+</span>
+
+<style>
+  .version-tag {
+    display: inline-block;
+    padding: 0 var(--space-2);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius);
+    font-size: var(--font-size-sm);
+    line-height: 1.6;
+    color: var(--color-fg);
+    background: var(--color-surface);
+    white-space: nowrap;
+  }
+
+  .version-tag--v2 {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .version-tag--v1 {
+    color: var(--color-muted);
+  }
+</style>

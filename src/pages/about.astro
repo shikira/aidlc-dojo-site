@@ -1,0 +1,46 @@
+---
+// S5 — このサイトについて (/about/). Site overview + the unofficial-site
+// disclosure (C-1 / SEC-4) stated in the body (separate from the SharedLayout
+// footer notice), plus onward links to related pages (no dead-end). All text
+// routes through t() (NFR-9 / BV-4).
+import SharedLayout from '../layouts/SharedLayout.astro';
+import { t } from '../i18n/t';
+import { SITE_ORIGIN } from '../config';
+---
+
+<SharedLayout
+  title={t('page.about.title')}
+  description={t('page.about.description')}
+  canonicalUrl={`${SITE_ORIGIN}/about/`}
+>
+  <article class="page">
+    <h1>{t('page.about.h1')}</h1>
+    <p>{t('page.about.intro.p1')}</p>
+    <p>{t('page.about.intro.p2')}</p>
+
+    <section aria-labelledby="about-unofficial">
+      <h2 id="about-unofficial">{t('page.about.unofficial.heading')}</h2>
+      <p>{t('page.about.unofficial.body')}</p>
+    </section>
+
+    <section aria-labelledby="about-related">
+      <h2 id="about-related">{t('page.about.related.heading')}</h2>
+      <ul>
+        <li><a href="/what-is-aidlc/">{t('page.about.related.whatis')}</a></li>
+        <li><a href="/credits/">{t('page.about.related.credits')}</a></li>
+        <li><a href="/privacy/">{t('page.about.related.privacy')}</a></li>
+        <li><a href="/roadmap/">{t('page.about.related.roadmap')}</a></li>
+      </ul>
+    </section>
+  </article>
+</SharedLayout>
+
+<style>
+  .page > p {
+    margin: 0 0 var(--space-4);
+  }
+
+  section {
+    margin-top: var(--space-6);
+  }
+</style>

@@ -1,0 +1,90 @@
+---
+// S6 — ロードマップ (/roadmap/). Renders the three status sections
+// (shipped/planned/later) from roadmapSections(). Each item gets id={anchorId}
+// so inbound deep-links land here (R-4, e.g. /roadmap/#exam). This page is the
+// TERMINAL landing surface: items are self-contained text with a StatusBadge and
+// carry NO outbound "準備中" links (R-2). All labels route through t() (NFR-9).
+import SharedLayout from '../layouts/SharedLayout.astro';
+import StatusBadge from '../components/StatusBadge.astro';
+import { t } from '../i18n/t';
+import { SITE_ORIGIN } from '../config';
+import { roadmapSections } from '../lib/roadmap';
+
+const sections = roadmapSections();
+---
+
+<SharedLayout
+  title={t('page.roadmap.title')}
+  description={t('page.roadmap.description')}
+  canonicalUrl={`${SITE_ORIGIN}/roadmap/`}
+>
+  <div class="page">
+    <h1>{t('page.roadmap.h1')}</h1>
+    <p class="lead">{t('page.roadmap.intro')}</p>
+
+    {
+      sections.map((section) => (
+        <section
+          class="roadmap-section"
+          aria-labelledby={`roadmap-heading-${section.status}`}
+        >
+          <h2 id={`roadmap-heading-${section.status}`}>
+            {t(`roadmap.section.${section.status}`)}
+          </h2>
+          <ul class="roadmap-list">
+            {section.items.map((roadmapItem) => (
+              <li id={roadmapItem.anchorId} class="roadmap-item">
+                <div class="roadmap-item__head">
+                  <h3 class="roadmap-item__title">{t(roadmapItem.titleKey)}</h3>
+                  <StatusBadge status={roadmapItem.status} />
+                </div>
+                <p class="roadmap-item__desc">{t(roadmapItem.descKey)}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+  </div>
+</SharedLayout>
+
+<style>
+  .lead {
+    margin: 0 0 var(--space-6);
+    color: var(--color-muted);
+  }
+
+  .roadmap-section {
+    margin-top: var(--space-6);
+  }
+
+  .roadmap-list {
+    list-style: none;
+    margin: var(--space-4) 0 0;
+    padding: 0;
+  }
+
+  .roadmap-item {
+    padding: var(--space-4) 0;
+    border-bottom: var(--border-width) solid var(--color-border);
+    /* deep-link target lands with headroom below the sticky-free header */
+    scroll-margin-top: var(--space-6);
+  }
+
+  .roadmap-item__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .roadmap-item__title {
+    margin: 0;
+    font-size: var(--font-size-lg);
+  }
+
+  .roadmap-item__desc {
+    margin: var(--space-2) 0 0;
+    color: var(--color-fg);
+  }
+</style>

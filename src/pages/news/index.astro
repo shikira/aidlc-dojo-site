@@ -1,0 +1,80 @@
+---
+// S7 — 新着一覧 (/news/). Loads CT-4 articles from UW-02's collection, maps to
+// the canonical Article shape, and sorts newest-first via sortArticlesForList.
+// When there are no articles it renders an empty state (message + onward links),
+// never an empty list (R-3). Otherwise one ArticleCard per article. No client JS.
+import SharedLayout from '../../layouts/SharedLayout.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import { t } from '../../i18n/t';
+import { SITE_ORIGIN } from '../../config';
+import { getCollection } from 'astro:content';
+import { articleExcerpt, sortArticlesForList } from '../../lib/articles';
+import type { Article } from '../../lib/content/types';
+
+const entries = await getCollection('articles');
+const articles: Article[] = entries.map((entry) => ({
+  slug: entry.id,
+  title: entry.data.title,
+  date: entry.data.date,
+  version: entry.data.version,
+  body: entry.body ?? '',
+}));
+const sorted = sortArticlesForList(articles);
+---
+
+<SharedLayout
+  title={t('page.news.title')}
+  description={t('page.news.description')}
+  canonicalUrl={`${SITE_ORIGIN}/news/`}
+>
+  <div class="page">
+    <h1>{t('page.news.h1')}</h1>
+
+    {
+      sorted.length === 0 ? (
+        <section class="empty-state" aria-labelledby="news-empty-heading">
+          <h2 id="news-empty-heading">{t('news.empty.heading')}</h2>
+          <p>{t('news.empty.message')}</p>
+          <ul>
+            <li>
+              <a href="/">{t('news.empty.linkHome')}</a>
+            </li>
+            <li>
+              <a href="/paths/white/">{t('news.empty.linkPaths')}</a>
+            </li>
+          </ul>
+        </section>
+      ) : (
+        <div class="news-list">
+          {sorted.map((article) => (
+            <ArticleCard
+              href={`/news/${article.slug}/`}
+              title={article.title}
+              date={article.date}
+              version={article.version}
+              excerpt={articleExcerpt(article)}
+            />
+          ))}
+        </div>
+      )
+    }
+  </div>
+</SharedLayout>
+
+<style>
+  .empty-state {
+    margin-top: var(--space-5);
+    padding: var(--space-5);
+    background: var(--color-surface);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius);
+  }
+
+  .empty-state h2 {
+    margin-top: 0;
+  }
+
+  .news-list {
+    margin-top: var(--space-4);
+  }
+</style>
