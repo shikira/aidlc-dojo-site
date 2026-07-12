@@ -1,0 +1,17 @@
+# CT-2 茶帯パス定義(1ファイル=1パスオブジェクト)。
+# uw-07 finalized-unit-list の写像表に従い、茶帯パスを教育順に登録。
+# 先頭の gates-and-human-oversight は白帯(uw-08)で作成済みの単一 CT-1 実体で、
+# 白帯パスと茶帯パスの双方に所属する複数パス所属単元(US-R1-18)。ここでは再作成せず
+# id 参照のみ(単一ソース C-4)。続く 5 単元(⑥⑦⑧⑨⑪)は uw-09 で新規作成。
+# 単元は自分の所属パスを知らない(Q4)— この unitIds が唯一の紐付け。
+belt: brown
+nameJa: 茶帯パス
+nameEn: Brown Belt
+audience: associate
+unitIds:
+  - gates-and-human-oversight
+  - setup-and-first-intent
+  - inception-in-practice
+  - construction-in-practice
+  - steering-rules-structure
+  - harness-integration

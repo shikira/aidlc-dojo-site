@@ -1,0 +1,302 @@
+# CT-3 茶帯問題プール(帯ごと1ファイル)。UW-09 本実装で 5 単元分を確定。
+# スキーマ(src/content.config.ts / src/lib/content/types.ts)に厳格準拠:
+#   {id, unitId, afterSection, prompt, choices[2-5], answerIndex, explanation, sourceUrl}
+# belt / version フィールドは持たない(BV-1: 問題は所属単元の version を継承。
+# ファイルが茶帯パス=belt は所在で決まる)。afterSection は各単元の h2 見出しの
+# slugify 済み文字列と一致。sourceUrl は uw-07 finalized-unit-list の検証済み
+# awslabs/aidlc-workflows v2(SHA b67798c)/ v1(v1.0.1)URL のみを使用。
+# answerIndex は選択肢内で分散(全問 0 にしない)。
+
+# ─────────────────────────────────────────────────────────────
+# ⑥ setup-and-first-intent(4問 / 各セクション1問以上)
+# ─────────────────────────────────────────────────────────────
+- id: q-setup-1
+  unitId: setup-and-first-intent
+  afterSection: 前提ツールとインストールbedrock-設定と---doctor
+  prompt: 'v2 実装(Claude Code ハーネス)を動かすために必要な前提ツールの組み合わせはどれですか。'
+  choices:
+    - 'Claude Code と bun — フックと CLI ツールはすべて bun 経由で動く'
+    - 'Docker と Node.js'
+    - 'Python と Poetry'
+  answerIndex: 0
+  explanation:
+    '必要な前提は Claude Code と bun の 2 つだけです。11 個のフックと CLI
+    ツールはすべて TypeScript で書かれ bun 経由で実行されます。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/guide/01-getting-started.md
+
+- id: q-setup-2
+  unitId: setup-and-first-intent
+  afterSection: 最初のワークフローを起動する
+  prompt: 'Initialization フェーズ(0.1〜0.3)の性質として正しいものはどれですか。'
+  choices:
+    - '各ステージに承認ゲートがあり、人間が逐一承認する'
+    - 'ブラウンフィールドのときだけ実行される'
+    - '承認ゲートを持たず、aidlc-utility init の中で決定的に(1 秒未満で)自動実行される'
+  answerIndex: 2
+  explanation:
+    '初期化の 3 ステージは決定的で、単一のツール呼び出し aidlc-utility init
+    の中で 1 秒未満に完了し、承認ゲートも人間の関与もありません。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/guide/02-your-first-workflow.md
+
+- id: q-setup-3
+  unitId: setup-and-first-intent
+  afterSection: intent-の-auto-birth-とワークスペースの構造
+  prompt: 'Intent(インテント)の auto-birth の説明として正しいものはどれですか。'
+  choices:
+    - '特別な作成コマンドを打たない限りインテントは始まらない'
+    - '最初に作業を記述した瞬間、エンジンがインテントを自動で誕生させレコードディレクトリを作る'
+    - 'インテントはチーム全体で 1 つだけで、作業ごとには作られない'
+  answerIndex: 1
+  explanation:
+    'インテントは 1 作業=1 実行。最初に作業を記述するとエンジンが auto-birth し、
+    aidlc/spaces/<space>/intents/<YYMMDD>-<label>/ にレコードディレクトリを作ります。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/guide/03-spaces-and-intents.md
+
+- id: q-setup-4
+  unitId: setup-and-first-intent
+  afterSection: stage-11-intent-capture-と承認ゲート
+  prompt: 'Stage 1.1 Intent Capture の承認ゲートで提示される標準の 2 つの選択肢はどれですか。'
+  choices:
+    - 'Deploy / Rollback'
+    - 'Merge / Discard'
+    - 'Approve(次ステージへ)/ Request Changes(修正フィードバックを渡す)'
+  answerIndex: 2
+  explanation:
+    '標準の 2 択ゲートは Approve(完了として印し次へ)と Request Changes
+    (フィードバックを渡してエージェントが修正し、ゲートを再提示)です。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/guide/02-your-first-workflow.md
+
+# ─────────────────────────────────────────────────────────────
+# ⑦ inception-in-practice(4問)
+# ─────────────────────────────────────────────────────────────
+- id: q-inception-1
+  unitId: inception-in-practice
+  afterSection: inception-フェーズの全体像
+  prompt: 'Inception フェーズで 2.1 Reverse Engineering が実行される条件はどれですか。'
+  choices:
+    - 'すべてのプロジェクトで常に実行される'
+    - 'ブラウンフィールド(既存コードベース)のときのみ実行される'
+    - 'グリーンフィールド(新規)のときのみ実行される'
+  answerIndex: 1
+  explanation:
+    '2.1 は二段のサブエージェント(developer スキャン → architect 統合)として、
+    ブラウンフィールドのときのみ走り、鮮度確保のため常に再実行されます。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/reference/04-stages/inception.md
+
+- id: q-inception-2
+  unitId: inception-in-practice
+  afterSection: requirements-analysis-とアダプティブ深度
+  prompt: '2.3 Requirements Analysis の「アダプティブ深度」の説明として正しいものはどれですか。'
+  choices:
+    - '要求の複雑さに応じて Minimal / Standard / Comprehensive を選ぶ(bugfix は minimal、enterprise は comprehensive が目安)'
+    - '深度は常に Comprehensive に固定される'
+    - 'ユーザーが毎回ファイルの文字数を手動で指定する'
+  answerIndex: 0
+  explanation:
+    'このステージは ALWAYS 実行ですが、明瞭さ・種別・スコープ・複雑さの評価に応じて
+    深度が Minimal / Standard / Comprehensive と伸縮します。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/reference/04-stages/inception.md
+
+- id: q-inception-3
+  unitId: inception-in-practice
+  afterSection: user-stories-とペルソナ
+  prompt: '2.4 User Stories で使われるストーリー品質基準と優先度付けの組み合わせはどれですか。'
+  choices:
+    - 'INVEST 基準(独立・交渉可能・価値・見積可能・小さい・テスト可能)と MoSCoW 優先度'
+    - 'SOLID 原則と TDD'
+    - 'KISS と DRY'
+  answerIndex: 0
+  explanation:
+    'ストーリーは INVEST 基準の形式で書かれ、MoSCoW(Must / Should / Could / Wont)で
+    優先度付けされます。MVP 境界に情報を与えますが、境界自体は 2.8 で決まります。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/reference/04-stages/inception.md
+
+- id: q-inception-4
+  unitId: inception-in-practice
+  afterSection: units-generation-とユニット分解
+  prompt: '2.7 Units Generation と 2.8 Delivery Planning の役割分担として正しいものはどれですか。'
+  choices:
+    - '2.7 が実装順(クリティカルパス)を決め、2.8 はそれを実行するだけ'
+    - '2.7 と 2.8 は同じ成果物を二重に作る'
+    - '2.7 が依存 DAG(トポロジー)を作り、2.8 がその中の経済的な経路(Bolt の並び)を選ぶ'
+  answerIndex: 2
+  explanation:
+    '2.7 は依存 DAG を作り、実装順やクリティカルパスは推奨しません。経済的シーケンシング
+    (Bolt の並び)は 2.8 Delivery Planning の決定です。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/reference/04-stages/inception.md
+
+# ─────────────────────────────────────────────────────────────
+# ⑧ construction-in-practice(4問)
+# ─────────────────────────────────────────────────────────────
+- id: q-construction-1
+  unitId: construction-in-practice
+  afterSection: bolt-by-bolt-で進める-construction
+  prompt: 'Bolt(ボルト)の定義として正しいものはどれですか。'
+  choices:
+    - '全ステージを一度だけ通す単一パス'
+    - 'あるユニット(または依存で結ばれた小群)に対するステージ 3.1〜3.5 の 1 パス'
+    - 'デプロイ先の環境名'
+  answerIndex: 1
+  explanation:
+    '1 つの Bolt はユニット(または依存で結ばれた小群)に対する 3.1〜3.5 の 1 パスです。
+    3.6 Build and Test と 3.7 CI Pipeline は全 Bolt 完了後に一度だけ走ります。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/guide/04-phases-and-stages.md
+
+- id: q-construction-2
+  unitId: construction-in-practice
+  afterSection: walking-skeleton-と-ladder-prompt
+  prompt: 'ウォーキングスケルトンと ladder prompt の説明として正しいものはどれですか。'
+  choices:
+    - '最初の Bolt が最小の端から端まで動くスライスで常にゲート付き、承認直後に ladder prompt が一度だけ自律/ゲートを問う'
+    - '最後の Bolt がスケルトンで、ladder prompt は毎 Bolt 発火する'
+    - 'スケルトンは省略可能で ladder prompt は存在しない'
+  answerIndex: 0
+  explanation:
+    '最初の Bolt(ウォーキングスケルトン)は常にゲート付きで、承認直後に ladder prompt が
+    一度だけ「continue autonomously / gate every Bolt」を尋ね、状態に記録します。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/harness-engineering/08-construction-and-swarm.md
+
+- id: q-construction-3
+  unitId: construction-in-practice
+  afterSection: 並列バッチと-halt-and-ask
+  prompt: 'Construction の halt-and-ask(失敗時の停止)の挙動として正しいものはどれですか。'
+  choices:
+    - '自律モードでは失敗を無視して継続する'
+    - '失敗すると常にワークフロー全体を即座に破棄する'
+    - 'autonomy モードに関わらず失敗は常に停止し、retry / skip / abort を人間に尋ねる'
+  answerIndex: 2
+  explanation:
+    '失敗は autonomy モードに関わらず常に Construction を止めます。これが自律モードで
+    唯一割り込む場面で、retry / skip / abort を人間に尋ねます。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/reference/04-stages/construction.md
+
+- id: q-construction-4
+  unitId: construction-in-practice
+  afterSection: convergence-と-swarm
+  prompt: 'swarm におけるユニットの「収束(convergence)」判定の権威ある信号はどれですか。'
+  choices:
+    - 'ワーカーが自己申告する「収束した」という主張'
+    - 'プロジェクト自身のチェックコマンドの終了コード(0 が収束、それ以外は未収束)'
+    - 'LLM がテキストで下す主観的な評価'
+  answerIndex: 1
+  explanation:
+    'フレームワークはワーカーの主張を鵜呑みにしません。権威ある信号はプロジェクト自身の
+    チェックコマンドで、終了コード 0 だけが Unit の作業をマージさせます。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/harness-engineering/08-construction-and-swarm.md
+
+# ─────────────────────────────────────────────────────────────
+# ⑨ steering-rules-structure(4問)
+# ─────────────────────────────────────────────────────────────
+- id: q-steering-1
+  unitId: steering-rules-structure
+  afterSection: v2-の5層ルールチェーン
+  prompt: 'v2 のルール解決チェーン(5 層)の正しい並びはどれですか。'
+  choices:
+    - 'project → team → org → stage → phase'
+    - 'org → team → project → phase → stage(strict-additive)'
+    - 'team → org → project(後勝ちの上書き型)'
+  answerIndex: 1
+  explanation:
+    'v2 は org → team → project → phase → stage の strict-additive チェーンで、
+    適用可能なルールはすべて文脈に現れ、実行時に落ちも上書きもされません。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/guide/09-rules-and-the-learning-loop.md
+
+- id: q-steering-2
+  unitId: steering-rules-structure
+  afterSection: 学習ループと-sensors
+  prompt: '学習ループの memory.md 日記に使われる 4 つの標準見出しはどれですか。'
+  choices:
+    - 'Interpretations / Deviations / Tradeoffs / Open questions'
+    - 'Pass / Fail / Skip / Error'
+    - 'Todo / Doing / Done / Blocked'
+  answerIndex: 0
+  explanation:
+    'memory.md の項目は Interpretations・Deviations・Tradeoffs・Open questions の
+    4 見出しの下にタイムスタンプ付きで落ち、ゲート儀式で候補として提示されます。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/guide/09-rules-and-the-learning-loop.md
+
+- id: q-steering-3
+  unitId: steering-rules-structure
+  afterSection: rule-system-の実装詳細
+  prompt: 'v2 のルールファイルのスコープはどのように決まりますか。'
+  choices:
+    - 'ファイル内の scope: フロントマターフィールドで指定する'
+    - 'ディレクトリの作成日時で決まる'
+    - 'ファイル名から導かれる(org.md→org、team.md→team、phases/<phase>.md→phase)'
+  answerIndex: 2
+  explanation:
+    'ルールファイルは scope: フィールドを持たず、スコープはファイル名から導かれます。
+    解決済みチェーンはコンパイル時に rules_in_context へ焼き込まれます。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/reference/08-rule-system.md
+
+- id: q-steering-4
+  unitId: steering-rules-structure
+  afterSection: v1-の2層ルール構造との対比
+  prompt: 'レガシー v1(v1.0.1)のルール配布物 aidlc-rules/ を構成する 2 つのサブディレクトリはどれですか。'
+  choices:
+    - 'src/ と dist/'
+    - 'memory/ と knowledge/'
+    - 'aws-aidlc-rules/(コアワークフロー)と aws-aidlc-rule-details/(詳細ルール)'
+  answerIndex: 2
+  explanation: 'v1 の aidlc-rules/ は aws-aidlc-rules/(コアワークフロー)と
+    aws-aidlc-rule-details/(オンデマンド参照される詳細ルール)の 2 層構造でした。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/v1.0.1/README.md
+
+# ─────────────────────────────────────────────────────────────
+# ⑪ harness-integration(4問)
+# ─────────────────────────────────────────────────────────────
+- id: q-harness-1
+  unitId: harness-integration
+  afterSection: one-core-many-harnesses
+  prompt: '「one core, many harnesses」設計で、すべてのハーネスに共通(バイト同一)なものはどれですか。'
+  choices:
+    - 'ゲートの描画方法と同梱 MCP サーバーの数'
+    - '決定的なエンジン — 状態機械・監査ログ・グラフ・swarm レフェリー・学習ゲート'
+    - '起動コマンドの文字列(/aidlc か $aidlc か)'
+  answerIndex: 1
+  explanation:
+    '決定的なエンジン(状態機械・監査・グラフ・swarm レフェリー・学習ゲート)は全配布物で
+    バイト同一で、違うのは shell(スキル・設定・フック結線・起動方法)だけです。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/guide/harnesses/README.md
+
+- id: q-harness-2
+  unitId: harness-integration
+  afterSection: claude-code-と-kiro-での実行
+  prompt: 'Kiro ハーネスでの主な差異として正しいものはどれですか。'
+  choices:
+    - 'ゲートと質問は番号付き散文で提示され、[Answer]: タグの質問ファイルが正本であり続ける'
+    - 'Kiro では承認ゲートが一切無くなる'
+    - 'Kiro は状態機械と監査証跡を独自の別実装へ置き換える'
+  answerIndex: 0
+  explanation:
+    'Kiro ではゲートが AskUserQuestion ウィジェットではなく番号付き散文で提示されますが、
+    状態機械・監査・学習儀式などは同一のツールが動くため変わりません。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/guide/harnesses/kiro-cli.md
+
+- id: q-harness-3
+  unitId: harness-integration
+  afterSection: codex-cli-での実行
+  prompt: 'Codex CLI ハーネス固有の前提・差異として正しいものはどれですか。'
+  choices:
+    - 'プロジェクトが git リポジトリである必要はない'
+    - '$aidlc で起動し、プロジェクトは git リポジトリで、信頼していないフックは走らせない'
+    - 'Codex は Amazon Bedrock を一切サポートしない'
+  answerIndex: 1
+  explanation:
+    'Codex は $aidlc で起動し、プロジェクトが git リポジトリである必要があり(hooks.json を
+    git 内でのみ発見)、信頼していないフックは決して走らせません。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/guide/harnesses/codex-cli.md
+
+- id: q-harness-4
+  unitId: harness-integration
+  afterSection: 新しいハーネスへの-porting
+  prompt: '新しいハーネスへの porting の規模感として正しいものはどれですか。'
+  choices:
+    - 'コア全体を書き換える大規模な作業になる'
+    - '各ステージファイルをハーネスごとに複製する必要がある'
+    - '概ね 1 つの harness/<name>/ ディレクトリと 1 つのマニフェスト行で済み、共有コードの編集はほぼゼロ'
+  answerIndex: 2
+  explanation:
+    'porting は 1 ディレクトリと 1 マニフェスト行が基本で、エンジン・方法論・解決ロジックは
+    core/ の編集を要しません(唯一の任意例外が per-harness の --doctor アーム)。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/harness-engineering/09-porting-to-a-new-harness.md

@@ -22,6 +22,12 @@ describe('getRoutePairs (URL dual-generation — US-R1-09)', () => {
   it('emits a path-context route per (path, unit) pair', () => {
     const pathRoutes = routes.filter((route) => route.kind === 'path');
     expect(pathRoutes.map((route) => route.url)).toEqual([
+      '/paths/brown/gates-and-human-oversight/',
+      '/paths/brown/setup-and-first-intent/',
+      '/paths/brown/inception-in-practice/',
+      '/paths/brown/construction-in-practice/',
+      '/paths/brown/steering-rules-structure/',
+      '/paths/brown/harness-integration/',
       '/paths/white/what-is-aidlc/',
       '/paths/white/why-aidlc-vs-traditional/',
       '/paths/white/core-concepts/',
@@ -36,9 +42,14 @@ describe('getRoutePairs (URL dual-generation — US-R1-09)', () => {
     );
     expect(canonicalRoutes.map((route) => route.url).sort()).toEqual(
       [
+        '/units/construction-in-practice/',
         '/units/core-concepts/',
         '/units/gates-and-human-oversight/',
+        '/units/harness-integration/',
+        '/units/inception-in-practice/',
         '/units/phases-overview/',
+        '/units/setup-and-first-intent/',
+        '/units/steering-rules-structure/',
         '/units/what-is-aidlc/',
         '/units/why-aidlc-vs-traditional/',
       ].sort(),
