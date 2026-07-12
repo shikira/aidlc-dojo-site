@@ -117,8 +117,11 @@ describe('SiteStack — CloudFront (OAC, logging, headers, atomic swap)', () => 
         }),
       }),
     );
-    expect(csp.asString()).toContain("default-src 'self'");
+    // Edge header carries hash-independent hardening; the full policy
+    // (default-src/script-src+hash) is the per-page <meta> CSP from uw-01.
     expect(csp.asString()).toContain("frame-ancestors 'none'");
+    expect(csp.asString()).toContain("base-uri 'self'");
+    expect(csp.asString()).toContain("object-src 'none'");
   });
 
   it('provisions the KeyValueStore + CloudFront Function for the atomic origin swap', () => {
