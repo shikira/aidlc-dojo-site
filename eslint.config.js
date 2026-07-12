@@ -18,6 +18,7 @@ export default tseslint.config(
       'coverage/**',
       '.astro/**',
       '.output/**',
+      '**/cdk.out/**',
     ],
   },
   {

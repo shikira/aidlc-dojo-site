@@ -22,23 +22,25 @@ describe('CI workflow triggers', () => {
 });
 
 describe('ci-gate aggregate check', () => {
-  it('defines lint, test, build, bv, size and ci-gate jobs', () => {
+  it('defines lint, test, build, bv, size, infra and ci-gate jobs', () => {
     const jobs = workflow.jobs ?? {};
     expect(jobs.lint).toBeDefined();
     expect(jobs.test).toBeDefined();
     expect(jobs.build).toBeDefined();
     expect(jobs.bv).toBeDefined();
     expect(jobs.size).toBeDefined();
+    expect(jobs.infra).toBeDefined();
     expect(jobs['ci-gate']).toBeDefined();
   });
 
-  it('has ci-gate depend on exactly [lint, test, build, bv, size]', () => {
+  it('has ci-gate depend on exactly [lint, test, build, bv, size, infra]', () => {
     expect(workflow.jobs?.['ci-gate']?.needs).toEqual([
       'lint',
       'test',
       'build',
       'bv',
       'size',
+      'infra',
     ]);
   });
 });

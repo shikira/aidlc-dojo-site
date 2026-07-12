@@ -1,0 +1,124 @@
+name: Deploy
+
+# CD leg (uw-06b). Fires on push to main (= squash-merge = release; D-1 — no
+# manual deploy path). Continues UW-06a's ci-gate contract: this runs AFTER a
+# change has merged. The single production environment (D-4) is fronted by the
+# GitHub Environment `production`, whose protection rules + variables the owner
+# configures (see docs/AWS-SETUP.md).
+on:
+  push:
+    branches: [main]
+
+# Never run two production deploys concurrently (the KVS release pointer is a
+# single shared mutable resource); let an in-flight deploy finish.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+# SEC-1 / least privilege: OIDC only. `id-token: write` mints the short-lived
+# token exchanged for the content-deploy role; no long-lived AWS keys exist.
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    name: deploy
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      AWS_REGION: ${{ vars.AWS_REGION }}
+      SITE_BUCKET: ${{ vars.SITE_BUCKET }}
+      DISTRIBUTION_ID: ${{ vars.DISTRIBUTION_ID }}
+      KVS_ARN: ${{ vars.KVS_ARN }}
+      BUILD_PREFIX: builds
+      CURRENT_KEY: current-prefix
+      LAST_KNOWN_GOOD_KEY: last-known-good
+      # Smoke target: canonical host once cut over, else the default CloudFront URL.
+      SMOKE_DEFAULT_URL: ${{ vars.SMOKE_DEFAULT_URL }}
+      SMOKE_DOMAIN: ${{ vars.SMOKE_DOMAIN }}
+      SMOKE_DOMAIN_READY: ${{ vars.SMOKE_DOMAIN_READY }}
+    steps:
+      # SEC-6: third-party actions pinned to a commit SHA (version in comment).
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Build production artifact
+        run: |
+          npm ci
+          npm run build
+
+      - name: Assume content-deploy role (OIDC)
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
+        with:
+          role-to-assume: ${{ vars.CONTENT_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Upload build to a new immutable versioned prefix
+        run: |
+          set -euo pipefail
+          PREFIX="${BUILD_PREFIX}/${GITHUB_SHA}"
+          echo "PREFIX=${PREFIX}" >> "$GITHUB_ENV"
+          echo "Uploading dist/ → s3://${SITE_BUCKET}/${PREFIX}/"
+          aws s3 sync dist/ "s3://${SITE_BUCKET}/${PREFIX}/" --no-progress
+
+      - name: Publish, smoke, and roll back on failure
+        run: |
+          set -euo pipefail
+
+          kvs_etag() {
+            aws cloudfront-keyvaluestore describe-key-value-store \
+              --kvs-arn "$KVS_ARN" --query ETag --output text
+          }
+          kvs_get() {
+            aws cloudfront-keyvaluestore get-key \
+              --kvs-arn "$KVS_ARN" --key "$1" --query Value --output text 2>/dev/null || echo ""
+          }
+          kvs_put() {
+            aws cloudfront-keyvaluestore put-key \
+              --kvs-arn "$KVS_ARN" --key "$1" --value "$2" --if-match "$(kvs_etag)" >/dev/null
+          }
+          invalidate() {
+            aws cloudfront create-invalidation \
+              --distribution-id "$DISTRIBUTION_ID" --paths "/*" >/dev/null
+          }
+          smoke() {
+            SMOKE_DEFAULT_URL="$SMOKE_DEFAULT_URL" \
+            SMOKE_DOMAIN="$SMOKE_DOMAIN" \
+            SMOKE_DOMAIN_READY="$SMOKE_DOMAIN_READY" \
+              node scripts/smoke.mjs
+          }
+
+          LAST_KNOWN_GOOD="$(kvs_get "$LAST_KNOWN_GOOD_KEY")"
+          echo "Publishing ${PREFIX} (last-known-good: '${LAST_KNOWN_GOOD:-<none>}')"
+
+          # Atomic origin swap: flip the pointer, then invalidate the edge cache.
+          kvs_put "$CURRENT_KEY" "$PREFIX"
+          invalidate
+
+          if smoke; then
+            echo "Smoke passed — promoting ${PREFIX} to last-known-good."
+            kvs_put "$LAST_KNOWN_GOOD_KEY" "$PREFIX"
+            exit 0
+          fi
+
+          echo "::error::Post-deploy smoke FAILED for ${PREFIX}."
+          if [ -z "$LAST_KNOWN_GOOD" ]; then
+            # Cold start (walking-skeleton Bolt 1): nothing to roll back to.
+            echo "::error::Cold start — no last-known-good to roll back to. Halting (D-3)."
+            exit 1
+          fi
+
+          echo "Rolling back to last-known-good: ${LAST_KNOWN_GOOD}"
+          kvs_put "$CURRENT_KEY" "$LAST_KNOWN_GOOD"
+          invalidate
+
+          if smoke; then
+            echo "::error::Rollback restored the previous good build. The failed change must re-enter via a fix PR."
+          else
+            echo "::error::Rollback re-smoke ALSO failed — delivery incident. Investigate immediately."
+          fi
+          exit 1
