@@ -202,26 +202,42 @@ async function main() {
       );
     }
 
-    const responses = [];
-    for (const target of targets) {
-      const url = baseUrl.replace(/\/$/, '') + target.path;
-      const { status, body } = await probe(url);
-      responses.push({ url, status, body, sentinel: target.sentinel });
-    }
+    // Post-deploy smoke races CloudFront Function KVS + cache propagation of
+    // the just-flipped "current-prefix": on the first publish of a new prefix
+    // the edge may briefly resolve a missing key (403) before the pointer
+    // propagates. Retry the whole probe set with backoff so a genuine failure
+    // is distinguished from propagation lag. Pure evaluateSmoke stays untouched.
+    const attempts = Number(process.env.SMOKE_ATTEMPTS ?? '8');
+    const delayMs = Number(process.env.SMOKE_RETRY_DELAY_MS ?? '15000');
+    let result;
+    for (let attempt = 1; attempt <= attempts; attempt += 1) {
+      const responses = [];
+      for (const target of targets) {
+        const url = baseUrl.replace(/\/$/, '') + target.path;
+        const { status, body } = await probe(url);
+        responses.push({ url, status, body, sentinel: target.sentinel });
+      }
+      result = evaluateSmoke(responses);
+      printReport(baseUrl, responses, result);
 
-    const result = evaluateSmoke(responses);
-    printReport(baseUrl, responses, result);
-
-    if (result.ok) {
-      console.log(
-        'smoke: PASSED — safe to publish this build as last-known-good.',
-      );
-      return;
+      if (result.ok) {
+        console.log(
+          'smoke: PASSED — safe to publish this build as last-known-good.',
+        );
+        return;
+      }
+      if (attempt < attempts) {
+        console.log(
+          `smoke: attempt ${attempt}/${attempts} failed; waiting ${delayMs}ms ` +
+            'for CloudFront/KVS propagation before retry…',
+        );
+        await new Promise((resolve) => globalThis.setTimeout(resolve, delayMs));
+      }
     }
 
     console.error(
       shouldRollback(result)
-        ? 'smoke: FAILED — CD should roll back to the last-known-good build.'
+        ? `smoke: FAILED after ${attempts} attempts — CD should roll back to the last-known-good build.`
         : 'smoke: FAILED.',
     );
     process.exitCode = 1;
