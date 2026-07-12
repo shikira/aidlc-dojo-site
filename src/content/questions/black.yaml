@@ -1,0 +1,316 @@
+# CT-3 黒帯問題プール(帯ごと1ファイル)。UW-10 本実装で 5 単元分を確定。
+# スキーマ(src/content.config.ts / src/lib/content/types.ts)に厳格準拠:
+#   {id, unitId, afterSection, prompt, choices[2-5], answerIndex, explanation, sourceUrl}
+# belt / version フィールドは持たない(BV-1: 問題は所属単元の version を継承。
+# ファイルが黒帯パス=belt は所在で決まる)。afterSection は各単元の h2 見出しの
+# slugify 済み文字列と一致。sourceUrl は uw-07 finalized-unit-list の検証済み
+# awslabs/aidlc-workflows v2(SHA b67798c)/ v1(v1.0.1)URL のみを使用。
+# answerIndex は選択肢内で分散(全問 0 にしない)。
+# ⑮ team-adoption / ⑯ antipatterns は Q-3/C-5 に従い、公式 docs で裏づけ可能な
+# 題材のみを出題(全問に検証済み sourceUrl を持つ)。裏づけ不能な実践知見は
+# 本文プロースに留め、問題化していない。
+
+# ─────────────────────────────────────────────────────────────
+# ⑫ operations-and-improvement(v2 / 4問 / 各セクション1問以上)
+# ─────────────────────────────────────────────────────────────
+- id: q-operations-1
+  unitId: operations-and-improvement
+  afterSection: operation-フェーズ概観とデプロイ経路4143
+  prompt: 'mvp・poc・bugfix・refactor スコープでは Operation フェーズはどう扱われますか。'
+  choices:
+    - '7 ステージすべてを Minimal 深度で実行する'
+    - '4.1 Deployment Pipeline と 4.3 Deployment Execution だけを実行する'
+    - 'Operation フェーズを丸ごとスキップする'
+  answerIndex: 2
+  explanation:
+    'mvp・poc・bugfix・refactor は Operation を丸ごとスキップします。infra は
+    4.1〜4.4、security-patch は 4.1 と 4.3 のみを実行します。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/reference/04-stages/operation.md
+
+- id: q-operations-2
+  unitId: operations-and-improvement
+  afterSection: observability44と-incident-response45
+  prompt: 'Operation フェーズで最も多くの内容ファイルを出力するステージはどれですか。'
+  choices:
+    - '4.4 Observability Setup(6 つの内容ファイル+質問ファイル)'
+    - '4.1 Deployment Pipeline'
+    - '4.5 Incident Response & Runbook Generation'
+    - '4.3 Deployment Execution'
+  answerIndex: 0
+  explanation:
+    '4.4 は dashboards・alarms・slo-config・log-queries・tracing-config・anomaly-config
+    の 6 つの内容ファイルを出し、Operation フェーズで最多の成果物を生みます。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/reference/04-stages/operation.md
+
+- id: q-operations-3
+  unitId: operations-and-improvement
+  afterSection: performance-validation46
+  prompt: '4.6 Performance Validation & Load Testing について正しいものはどれですか。'
+  choices:
+    - 'リードは aidlc-operations-agent で、cd-config.md を出力する'
+    - '承認ゲートを持たず自動で完了する'
+    - '本番デプロイそのものを実行するステージである'
+    - 'リードは aidlc-quality-agent で、NFR 目標 vs 実測の nfr-validation-matrix.md を出力する'
+  answerIndex: 3
+  explanation:
+    '4.6 は aidlc-quality-agent がリードし、負荷テストで NFR 目標と実測を突き合わせる
+    nfr-validation-matrix.md を出します。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/reference/04-stages/operation.md
+
+- id: q-operations-4
+  unitId: operations-and-improvement
+  afterSection: continuous-feedback-optimization47と継続改善
+  prompt: 'ワークフロー最終ステージ 4.7 のユニークな承認ゲートの特徴はどれですか。'
+  choices:
+    - '承認は不要で、完了すると自動で新サイクルが始まる'
+    - '3 択で、Approve / Request Changes に加え Start New Ideation Cycle を持つ'
+    - 'スコープを選び直す 9 択のゲートになる'
+  answerIndex: 1
+  explanation:
+    '4.7 だけが 3 択ゲート(Approve / Request Changes / Start New Ideation Cycle)を
+    持ち、運用の学びを次の Ideation サイクルへ還す循環性を表します。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/reference/04-stages/operation.md
+
+# ─────────────────────────────────────────────────────────────
+# ⑬ rule-customization(v2 / 5問 / 各セクション1問以上)
+# ─────────────────────────────────────────────────────────────
+- id: q-rulecustom-1
+  unitId: rule-customization
+  afterSection: settings-のオーバーライドとスコープ深度テスト戦略
+  prompt: '秘密情報や個人的な設定上書きは、どのファイルに置くべきですか。'
+  choices:
+    - 'コミットされる .claude/settings.json'
+    - 'gitignore された .claude/settings.local.json'
+    - 'aidlc/spaces/default/memory/org.md'
+  answerIndex: 1
+  explanation:
+    'settings.json はバージョン管理されコミットされるため、機微な値や個人的な上書きは
+    gitignore 済みの settings.local.json に置きます。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/guide/13-customization.md
+
+- id: q-rulecustom-2
+  unitId: rule-customization
+  afterSection: ツール権限の拡張と縮小extending-ai-dlc
+  prompt: 'エージェントに出荷時から掛かっている唯一のツール制限はどれですか。'
+  choices:
+    - 'disallowedTools: Task(ネストしたサブエージェント生成の禁止)'
+    - 'Bash が全面的に禁止されている'
+    - 'Write と Edit が禁止されている'
+    - '全エージェントで WebSearch が禁止されている'
+  answerIndex: 0
+  explanation:
+    'エージェントは既定でセッションのツールセット全部を継承し、唯一の出荷時制限は
+    disallowedTools: Task(ネストしたサブエージェント生成の禁止)です。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/guide/13-customization.md
+
+- id: q-rulecustom-3
+  unitId: rule-customization
+  afterSection: 5-層ルールチェーンでのチームプロジェクト適応
+  prompt: 'v2 の 5 層ルールチェーンの解決モデルはどれですか。'
+  choices:
+    - 'overrides: ブロックにより上位スコープが下位を上書きする'
+    - 'enforcement: enforced が付いたルールだけが実行時に適用される'
+    - 'strict-additive — 適用されるルールはすべて文脈に現れ、実行時に落ちない'
+  answerIndex: 2
+  explanation:
+    'strict-additive。org→team→project→phase→stage が連結され何も drop せず、旧来の
+    overrides: / enforcement: キーワードは廃止されています。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/reference/08-rule-system.md
+
+- id: q-rulecustom-4
+  unitId: rule-customization
+  afterSection: team-knowledge二層の追加
+  prompt: 'アップグレードで上書きされるため編集してはいけない知識の層はどれですか。'
+  choices:
+    - 'Tier 2 — space レベルの aidlc/knowledge/ のチーム知識'
+    - 'Tier 1 — .claude/knowledge/ の方法論知識'
+    - 'aidlc/spaces/<space>/memory/project.md のルール'
+  answerIndex: 1
+  explanation:
+    'Tier 1 の方法論知識は同梱でアップグレード時に上書きされます。編集してよいのは
+    space レベルの Tier 2 チーム知識だけです。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/harness-engineering/07-team-knowledge.md
+
+- id: q-rulecustom-5
+  unitId: rule-customization
+  afterSection: 学習ループによる自己修正
+  prompt: '学習ゲートで確定した学びが効き始めるのはいつですか。'
+  choices:
+    - 'その場で即座に、現在のワークフローの残りステージに適用される'
+    - 'org.md に書き込まれ、全プロジェクトへ即時に反映される'
+    - '承認ゲートを 3 回通過した時点で有効になる'
+    - '次のワークフローから(走行中は開始時のコンパイル済みビューを保つ)'
+  answerIndex: 3
+  explanation:
+    '確定した学びはディスクに載っても走行中のワークフローには反映されず、次回の
+    コンパイルから効きます — 地面を途中で変えない予測可能性を守ります。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/guide/09-rules-and-the-learning-loop.md
+
+# ─────────────────────────────────────────────────────────────
+# ⑭ v1-to-v2-evolution(common / 3問 / 各セクション1問以上)
+# ─────────────────────────────────────────────────────────────
+- id: q-v1v2-1
+  unitId: v1-to-v2-evolution
+  afterSection: v11x系列の現在地
+  prompt: 'v1(1.x)系列の core-workflow のフェーズ構成として正しいものはどれですか。'
+  choices:
+    - '5 フェーズで、Operation は 7 ステージの実体を持つ'
+    - '3 フェーズ(Inception→Construction→Operations)で、Operations は PLACEHOLDER'
+    - '4 フェーズで、Ideation が最初のフェーズ'
+  answerIndex: 1
+  explanation:
+    'v1 は 3 フェーズのアダプティブワークフローで、Operations は実体のない PLACEHOLDER
+    でした(ビルドとテストは Construction フェーズで扱う)。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/v1.0.1/aidlc-rules/aws-aidlc-rules/core-workflow.md
+
+- id: q-v1v2-2
+  unitId: v1-to-v2-evolution
+  afterSection: v22xの到達点
+  prompt: 'v2 のフェーズ数・ステージ数・エージェント数の組み合わせはどれですか。'
+  choices:
+    - '5 フェーズ・32 ステージ・11 エージェント'
+    - '3 フェーズ・32 ステージ・13 エージェント'
+    - '5 フェーズ・24 ステージ・9 エージェント'
+    - '4 フェーズ・28 ステージ・11 エージェント'
+  answerIndex: 0
+  explanation:
+    'v2 は 5 フェーズ・32 ステージ・11 のドメインエキスパートエージェントを持ちます
+    (introduction の Key Numbers)。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/guide/00-introduction.md
+
+- id: q-v1v2-3
+  unitId: v1-to-v2-evolution
+  afterSection: 進化の経緯と移行changelog-の-upgrade-注記
+  prompt: 'v2 に専用の移行ガイドが無い中、CHANGELOG の「Upgrade」注記が一貫して指示する動作はどれですか。'
+  choices:
+    - 'データベースのマイグレーションスクリプトを手動実行する'
+    - '/aidlc --init --force で state をワイプして作り直す'
+    - 'プロジェクトへ dist/<harness>/ の shell を再コピーする'
+  answerIndex: 2
+  explanation:
+    'Upgrade 注記は一貫して「re-copy your dist/<harness>/ shell into the project」を
+    指示します。v2 には専用の移行ガイド文書はありません。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/CHANGELOG.md
+
+# ─────────────────────────────────────────────────────────────
+# ⑮ team-adoption-and-scaling(common / 4問 / 全問 sourced — Q-3/C-5)
+# ─────────────────────────────────────────────────────────────
+- id: q-teamadopt-1
+  unitId: team-adoption-and-scaling
+  afterSection: spaceチーム単位ワークスペースと複数チーム運用
+  prompt: 'AI-DLC の intent と space の関係として正しいものはどれですか。'
+  choices:
+    - 'intent はチーム単位、space は 1 つの作業を指す'
+    - 'intent と space は同じ概念の別名である'
+    - 'intent は 1 つの作業(ライフサイクルの 1 実行)、space は 1 チームの世界(memory/knowledge/codekb/intents)'
+  answerIndex: 2
+  explanation:
+    'intent は 1 作業(1 実行)、space は 1 チームの memory・knowledge・codekb・intents
+    を持つ世界です。多くの人は default space だけを使います。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/guide/03-spaces-and-intents.md
+
+- id: q-teamadopt-2
+  unitId: team-adoption-and-scaling
+  afterSection: small-mob-broad-agents-とチームでの進め方
+  prompt: 'モブプログラミングにおける Driver の役割はどれですか。'
+  choices:
+    - '設計判断を独力で行い、実装方針を決める'
+    - 'セッションの進行管理とローテーションタイマーを担う'
+    - 'キーボード担当として、ナビゲータの意図をコードに翻訳する「賢い入力デバイス」'
+    - 'コードレビューだけを非同期で担当する'
+  answerIndex: 2
+  explanation:
+    'Driver はキーボードに座り設計判断はせず、ナビゲータの意図をコードに翻訳します。
+    進行管理は任意の Facilitator の役割です。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/core/knowledge/aidlc-delivery-agent/mob-programming-guide.md
+
+- id: q-teamadopt-3
+  unitId: team-adoption-and-scaling
+  afterSection: team-topologies4-類型相互作用モード認知負荷
+  prompt: 'Team Topologies で「組織の大半を占めるべき主役」とされるチーム型はどれですか。'
+  choices:
+    - 'Platform Team'
+    - 'Enabling Team'
+    - 'Complicated-Subsystem Team'
+    - 'Stream-Aligned Team'
+  answerIndex: 3
+  explanation:
+    'Stream-Aligned Team が主役で、組織の大半はこれであるべきとされます。他の 3 型は
+    stream-aligned チームの認知負荷を下げるために存在します。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/core/knowledge/aidlc-delivery-agent/team-topologies.md
+
+- id: q-teamadopt-4
+  unitId: team-adoption-and-scaling
+  afterSection: team-knowledge-の共有と組織標準の展開
+  prompt: 'Tier 2 チーム知識で「全 11 エージェントが毎ステージ読み込む」ディレクトリはどれですか。'
+  choices:
+    - 'aidlc/knowledge/aidlc-shared/'
+    - 'aidlc/knowledge/aidlc-architect-agent/'
+    - '.claude/knowledge/aidlc-shared/(Tier 1・上書きされる)'
+  answerIndex: 0
+  explanation:
+    'aidlc-shared/ は全エージェントが横断的に読み、<agent>-agent/ はそのエージェントが
+    リードのときだけ読まれます。ディレクトリ名はスラグと完全一致が必須です。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/harness-engineering/07-team-knowledge.md
+
+# ─────────────────────────────────────────────────────────────
+# ⑯ antipatterns-and-pitfalls(common / 4問 / 全問 sourced — Q-3/C-5)
+# ─────────────────────────────────────────────────────────────
+- id: q-antipattern-1
+  unitId: antipatterns-and-pitfalls
+  afterSection: 仕様なきコード生成と過信の罠
+  prompt: '「迷ったら訊く。不完全な回答は貧弱な設計を生む」に対応する AI-DLC の原則はどれですか。'
+  choices:
+    - 'Questions before assumptions(仮定の前に質問)'
+    - 'Adaptive depth(アダプティブ深度)'
+    - 'Traceable artifacts(トレース可能な成果物)'
+  answerIndex: 0
+  explanation:
+    'Questions before assumptions。No emergent behavior や User decides, AI executes
+    とともに、過信と仕様なきコード生成を抑える中核原則です。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/core/knowledge/aidlc-shared/ai-dlc-principles.md
+
+- id: q-antipattern-2
+  unitId: antipatterns-and-pitfalls
+  afterSection: コンテキスト肥大化と-compaction
+  prompt: 'compaction(コンテキスト要約)で失われるものはどれですか。'
+  choices:
+    - 'レコードディレクトリのアーティファクト(ディスク上のファイル)'
+    - 'aidlc-state.md(ステージ進捗・スコープ)'
+    - 'audit/ シャード(判断と行動の全履歴)'
+    - '.aidlc-recovery.md(ステージチェックポイント)'
+    - 'メモリ上の会話文脈と、ファイルに未書き込みの途中作業'
+  answerIndex: 4
+  explanation:
+    '失われるのはメモリ上のもの(会話文脈・未書き込みの途中作業)だけです。ディスク上の
+    state・アーティファクト・audit・recovery ブレッドクラムは保持されます。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/guide/11-session-management.md
+
+- id: q-antipattern-3
+  unitId: antipatterns-and-pitfalls
+  afterSection: 承認ゲートの停滞と-3-strike-リビジョン離脱
+  prompt: '同じステージで 3 回以上 Request Changes を出すと現れる 3 番目の選択肢はどれですか。'
+  choices:
+    - 'Restart workflow(ワークフローを最初からやり直す)'
+    - 'Accept as-is(現行版をアーカイブして次へ進む)'
+    - 'Delete stage(ステージを削除する)'
+  answerIndex: 1
+  explanation:
+    '3-Strike 脱出ハッチです。3 回以上のリビジョンで Accept as-is が現れ、現行版を
+    アーカイブして進みます。リビジョンカウントは次ステージでリセットされます。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/guide/07-interaction-modes.md
+
+- id: q-antipattern-4
+  unitId: antipatterns-and-pitfalls
+  afterSection: state-破損hook-不発lock-残留の運用トラブルと復旧
+  prompt: '「監査エントリが出ない・サブエージェント完了ログが出ない」= hook 不発の最も多い原因はどれですか。'
+  choices:
+    - 'bun が未インストールか PATH に無い'
+    - 'ディスク容量が不足している'
+    - 'aidlc-state.md が存在しない'
+    - 'インターネット接続が無い'
+  answerIndex: 0
+  explanation:
+    '11 個の TypeScript フックはすべて bun を要します。bun が無い/非対話シェルの PATH
+    に無いのが最頻の原因で、次点は settings.json の hooks ブロック未設定です。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/guide/15-troubleshooting.md

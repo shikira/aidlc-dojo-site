@@ -22,6 +22,11 @@ describe('getRoutePairs (URL dual-generation — US-R1-09)', () => {
   it('emits a path-context route per (path, unit) pair', () => {
     const pathRoutes = routes.filter((route) => route.kind === 'path');
     expect(pathRoutes.map((route) => route.url)).toEqual([
+      '/paths/black/operations-and-improvement/',
+      '/paths/black/rule-customization/',
+      '/paths/black/v1-to-v2-evolution/',
+      '/paths/black/team-adoption-and-scaling/',
+      '/paths/black/antipatterns-and-pitfalls/',
       '/paths/brown/gates-and-human-oversight/',
       '/paths/brown/setup-and-first-intent/',
       '/paths/brown/inception-in-practice/',
@@ -42,14 +47,19 @@ describe('getRoutePairs (URL dual-generation — US-R1-09)', () => {
     );
     expect(canonicalRoutes.map((route) => route.url).sort()).toEqual(
       [
+        '/units/antipatterns-and-pitfalls/',
         '/units/construction-in-practice/',
         '/units/core-concepts/',
         '/units/gates-and-human-oversight/',
         '/units/harness-integration/',
         '/units/inception-in-practice/',
+        '/units/operations-and-improvement/',
         '/units/phases-overview/',
+        '/units/rule-customization/',
         '/units/setup-and-first-intent/',
         '/units/steering-rules-structure/',
+        '/units/team-adoption-and-scaling/',
+        '/units/v1-to-v2-evolution/',
         '/units/what-is-aidlc/',
         '/units/why-aidlc-vs-traditional/',
       ].sort(),

@@ -1,0 +1,14 @@
+# CT-2 黒帯パス定義(1ファイル=1パスオブジェクト)。
+# uw-07 finalized-unit-list の写像表に従い、黒帯パスを教育順に登録。
+# 黒帯パスに共有単元は無く、黒帯 5 単元のみで構成される(UW-10 で新規作成)。
+# 単元は自分の所属パスを知らない(Q4)— この unitIds が唯一の紐付け。
+belt: black
+nameJa: 黒帯パス
+nameEn: Black Belt
+audience: professional
+unitIds:
+  - operations-and-improvement
+  - rule-customization
+  - v1-to-v2-evolution
+  - team-adoption-and-scaling
+  - antipatterns-and-pitfalls
