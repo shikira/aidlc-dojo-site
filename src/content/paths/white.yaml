@@ -1,9 +1,15 @@
-# SEED SAMPLE (UW-02) — CT-2 path definition. 本番の帯/単元割当は uw-07 写像表に従い
-# UW-08〜10 が拡張する。単元は自分の所属パスを知らない(Q4)— この unitIds が唯一の紐付け。
+# CT-2 白帯パス定義(1ファイル=1パスオブジェクト)。
+# uw-07 finalized-unit-list の写像表に従い、白帯 5 単元を①〜⑤の順に登録。
+# 単元は自分の所属パスを知らない(Q4)— この unitIds が唯一の紐付け。
+# gates-and-human-oversight は茶帯パス(uw-09)からも参照される単一 CT-1 実体
+# (複数パス所属 US-R1-18)。ここで重複定義はしない。
 belt: white
 nameJa: 白帯パス
 nameEn: White Belt
 audience: foundational
 unitIds:
   - what-is-aidlc
+  - why-aidlc-vs-traditional
+  - core-concepts
+  - phases-overview
   - gates-and-human-oversight

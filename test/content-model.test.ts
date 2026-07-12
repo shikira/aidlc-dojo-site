@@ -43,6 +43,9 @@ describe('paths and reverse index', () => {
   it('getUnitsForPath returns units in unitIds order', () => {
     expect(model.getUnitsForPath('white').map((unit) => unit.id)).toEqual([
       'what-is-aidlc',
+      'why-aidlc-vs-traditional',
+      'core-concepts',
+      'phases-overview',
       'gates-and-human-oversight',
     ]);
   });
@@ -65,7 +68,7 @@ describe('neighborsInPath (boundary nulls — C5)', () => {
   it('null prev at the head, unit next', () => {
     const neighbors = model.neighborsInPath('white', 'what-is-aidlc');
     expect(neighbors.prev).toBeNull();
-    expect(neighbors.next?.id).toBe('gates-and-human-oversight');
+    expect(neighbors.next?.id).toBe('why-aidlc-vs-traditional');
   });
 
   it('unit prev at the tail, null next', () => {
@@ -73,7 +76,7 @@ describe('neighborsInPath (boundary nulls — C5)', () => {
       'white',
       'gates-and-human-oversight',
     );
-    expect(neighbors.prev?.id).toBe('what-is-aidlc');
+    expect(neighbors.prev?.id).toBe('phases-overview');
     expect(neighbors.next).toBeNull();
   });
 
@@ -87,7 +90,7 @@ describe('neighborsInPath (boundary nulls — C5)', () => {
 describe('getQuestionsForUnit (sorted by afterSection)', () => {
   it('returns exactly this unit’s questions', () => {
     const questions = model.getQuestionsForUnit('what-is-aidlc');
-    expect(questions).toHaveLength(3);
+    expect(questions).toHaveLength(4);
     expect(questions.every((q) => q.unitId === 'what-is-aidlc')).toBe(true);
   });
 
