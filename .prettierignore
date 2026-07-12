@@ -3,4 +3,5 @@ dist/
 coverage/
 .astro/
 .output/
+cdk.out/
 package-lock.json
