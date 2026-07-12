@@ -36,8 +36,11 @@ describe('getAllUnits / getUnit (fail-fast)', () => {
 });
 
 describe('paths and reverse index', () => {
-  it('getAllPaths returns the white path', () => {
-    expect(model.getAllPaths().map((path) => path.belt)).toEqual(['white']);
+  it('getAllPaths returns the white and brown paths', () => {
+    expect(model.getAllPaths().map((path) => path.belt)).toEqual([
+      'brown',
+      'white',
+    ]);
   });
 
   it('getUnitsForPath returns units in unitIds order', () => {
