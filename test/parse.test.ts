@@ -23,14 +23,14 @@ describe('loadCollections (sample content)', () => {
   it('loads all four collections from disk', () => {
     expect(collections.units.length).toBeGreaterThanOrEqual(2);
     expect(collections.paths).toHaveLength(1);
-    expect(collections.questions).toHaveLength(6);
+    expect(collections.questions).toHaveLength(20);
     expect(collections.articles.length).toBeGreaterThanOrEqual(1);
   });
 
   it('parses unit frontmatter and body', () => {
     const unit = collections.units.find((u) => u.id === 'what-is-aidlc');
     expect(unit?.version).toBe('common');
-    expect(unit?.body).toContain('## AI-DLCとは');
+    expect(unit?.body).toContain('## AI-DLCの定義と起源');
   });
 
   it('flattens the per-belt questions array into individual questions', () => {
@@ -39,6 +39,6 @@ describe('loadCollections (sample content)', () => {
     );
     expect(
       collections.questions.filter((q) => q.unitId === 'what-is-aidlc'),
-    ).toHaveLength(3);
+    ).toHaveLength(4);
   });
 });

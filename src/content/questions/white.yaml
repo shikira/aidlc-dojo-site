@@ -1,79 +1,276 @@
-# SEED SAMPLE (UW-02) — CT-3 question pool for the white belt (帯ごと1ファイル).
-# 3 questions per unit, one after each h2 section. sourceUrl は uw-07
-# finalized-unit-list の検証済み v2 URL(SHA b67798c 固定)。到達性は検証しない(Q5)。
-# afterSection は各単元の h2 見出しの slug(slugify 済み)と一致させる。
+# CT-3 白帯問題プール(帯ごと1ファイル)。UW-08 本実装で 5 単元分を確定。
+# スキーマ(src/content.config.ts / src/lib/content/types.ts)に厳格準拠:
+#   {id, unitId, afterSection, prompt, choices[2-5], answerIndex, explanation, sourceUrl}
+# belt / version フィールドは持たない(BV-1: 問題は所属単元の version を継承。
+# ファイルが白帯パス=belt は所在で決まる)。afterSection は各単元の h2 見出しの
+# slugify 済み文字列と一致。sourceUrl は uw-07 finalized-unit-list の検証済み
+# awslabs/aidlc-workflows v2(SHA b67798c)/ v1(v1.0.1)URL のみを使用。
 
-# --- what-is-aidlc ---
+# ─────────────────────────────────────────────────────────────
+# ① what-is-aidlc(4問 / 各セクション1問以上)
+# ─────────────────────────────────────────────────────────────
 - id: q-what-is-aidlc-1
   unitId: what-is-aidlc
-  afterSection: ai-dlcとは
-  prompt: AI-DLC の基本原則として正しいものはどれですか。
+  afterSection: ai-dlcの定義と起源
+  prompt: 'AI-DLC(AI-Driven Development Life Cycle)の説明として正しいものはどれですか。'
   choices:
-    - AI が意思決定し、人間が実行する
-    - 人間が意思決定し、AI が実行する
-    - すべて人間が手作業で行う
-  answerIndex: 1
-  explanation: AI-DLC の原則は「User decides, AI executes」— 人間が意思決定し AI が実行します。
-  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/core/knowledge/aidlc-shared/ai-dlc-principles.md
+    - 'AI 支援開発を再現可能でトレース可能なフェーズへ構造化する、AWS 由来の方法論'
+    - '特定の IDE 専用に作られた単体のプラグイン'
+    - 'テスト自動化だけを担う独立ツール'
+  answerIndex: 0
+  explanation:
+    'AI-DLC は AWS が提唱した方法論で、ハーネス中立なコアから Claude Code・Kiro・Codex などの CLI
+    上でネイティブに動きます。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/guide/00-introduction.md
 
 - id: q-what-is-aidlc-2
   unitId: what-is-aidlc
-  afterSection: 5つのフェーズ
-  prompt: AI-DLC の5フェーズに含まれないものはどれですか。
+  afterSection: 5つのフェーズによるライフサイクル
+  prompt: 'v2 における 5 フェーズの並びとして正しいものはどれですか。'
   choices:
-    - Initialization
-    - Ideation
-    - Construction
-    - Marketing
-  answerIndex: 3
-  explanation: 5フェーズは Initialization / Ideation / Inception / Construction / Operation です。Marketing は含まれません。
+    - 'Ideation → Construction → Operation'
+    - 'Initialization → Ideation → Inception → Construction → Operation'
+    - 'Inception → Construction → Operations'
+    - 'Planning → Coding → Release'
+  answerIndex: 1
+  explanation:
+    'ライフサイクルは Initialization / Ideation / Inception / Construction /
+    Operation の 5 フェーズ・32 ステージで構成されます。'
   sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/guide/04-phases-and-stages.md
 
 - id: q-what-is-aidlc-3
   unitId: what-is-aidlc
-  afterSection: engineとconductor
-  prompt: Engine と Conductor の役割の説明として正しいものはどれですか。
+  afterSection: engineとconductorのオーケストレーションループ
+  prompt: 'Engine と Conductor の役割分担として正しいものはどれですか。'
   choices:
-    - Engine は決定的なツール群、Conductor はオーケストレーションを担う LLM
-    - Engine は LLM、Conductor は決定的なツール群
-    - どちらも同じ LLM の別名
-  answerIndex: 0
-  explanation: Engine は決定的なツール群として状態や監査ログを管理し、Conductor(LLM)がプロトコルに沿って作業を進めます。
+    - 'Conductor がルーティングを決め、Engine が会話で実行する'
+    - 'Engine と Conductor は同じ LLM の別名で役割の区別はない'
+    - 'Engine がルーティング(次に何をするか)を決め、Conductor がそれを実行する'
+  answerIndex: 2
+  explanation: '決定的な Engine が次の一手(ルーティング)を決め、Conductor(/aidlc
+    セッション=SKILL.md)がそれを実行して、また次を尋ねます。'
   sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/guide/00-introduction.md
 
-# --- gates-and-human-oversight ---
+- id: q-what-is-aidlc-4
+  unitId: what-is-aidlc
+  afterSection: ai-dlcを支える要素
+  prompt: 'AI-DLC が数十の狭い専門家ではなく 11 の広いエージェントを採用する理由として正しいものはどれですか。'
+  choices:
+    - '狭い専門家の乱立はウォーターフォールの引き継ぎの連鎖を再現し、文脈の喪失点を増やすため'
+    - 'エージェントが多いほど実行が速くなるため'
+    - 'ライセンス費用を削減するため'
+  answerIndex: 0
+  explanation: '「Small Mob, Broad Agents」は、複数ステージをまたぐ広いエージェントで引き継ぎを減らし、文脈を自然に保つ設計です。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/core/knowledge/aidlc-shared/ai-dlc-principles.md
+
+# ─────────────────────────────────────────────────────────────
+# ② why-aidlc-vs-traditional(3問)
+# ─────────────────────────────────────────────────────────────
+- id: q-why-aidlc-1
+  unitId: why-aidlc-vs-traditional
+  afterSection: 従来のai支援開発が抱える課題
+  prompt: '行き当たりばったりの AI コーディングで起こる問題として README が挙げるものはどれですか。'
+  choices:
+    - 'コンパイル速度が遅くなる'
+    - 'プロンプト間で文脈がずれ、決定の理由が残らず、モデルが頼んでいないことを静かにやってしまう'
+    - '依存ライブラリが自動で削除される'
+  answerIndex: 1
+  explanation: 'README は、本格化すると文脈のdrift・根拠の未記録・意図しない挙動が起こると指摘しています。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/README.md
+
+- id: q-why-aidlc-2
+  unitId: why-aidlc-vs-traditional
+  afterSection: ai-dlcの狙いとテネット
+  prompt: 'AI-DLC の第一のテネットとして正しいものはどれですか。'
+  choices:
+    - 'AI decides, user executes(AI が決め、人間が実行する)'
+    - '全自動で人間は一切関与しない'
+    - 'User decides, AI executes(人間が決め、AI が実行する)'
+  answerIndex: 2
+  explanation: '重要な決定はすべて承認ゲートを通り、人間がレビュー・修正・却下できます。これが第一の原則です。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/core/knowledge/aidlc-shared/ai-dlc-principles.md
+
+- id: q-why-aidlc-3
+  unitId: why-aidlc-vs-traditional
+  afterSection: スモールモブという設計思想
+  prompt: '「Small Mob, Broad Agents」が模しているものはどれですか。'
+  choices:
+    - '3〜5 人のモブが一機能を要件からデプロイまで丸ごとカバーする人間チームの働き方'
+    - '工程ごとに担当を細かく分ける多段の専門家分業'
+    - '単一の万能 AI にすべてを任せる方式'
+  answerIndex: 0
+  explanation: '各エージェントが広いスキルを持ち寄り、複数ステージをまたいで文脈を運ぶ点が、モブの働き方に対応します。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/guide/00-introduction.md
+
+# ─────────────────────────────────────────────────────────────
+# ③ core-concepts(4問)
+# ─────────────────────────────────────────────────────────────
+- id: q-core-concepts-1
+  unitId: core-concepts
+  afterSection: インテントとスペースの関係
+  prompt: 'Intent(インテント)の説明として正しいものはどれですか。'
+  choices:
+    - '手動の作成コマンドが必須の、変更できない恒久設定'
+    - '一つの作業=ライフサイクルの一回の実行で、初回の /aidlc でエンジンが auto-birth する'
+    - 'チーム全体を束ねる最上位の器で、作業ごとには作られない'
+  answerIndex: 1
+  explanation: 'インテントは 1 作業=1 実行。最初に作業を記述すると、エンジンが自動でインテントを誕生させ、レコードディレクトリを作ります。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/guide/03-spaces-and-intents.md
+
+- id: q-core-concepts-2
+  unitId: core-concepts
+  afterSection: 作業単位ユニットオブワーク
+  prompt: 'Unit of work(ユニット)が切り出されるステージはどれですか。'
+  choices:
+    - 'Construction のステージ 3.5(Code Generation)'
+    - 'Ideation のステージ 1.1(Intent Capture)'
+    - 'Inception のステージ 2.7(Units Generation)'
+  answerIndex: 2
+  explanation: 'ユニットは独立して実装可能な解決策の一片で、Inception の 2.7 Units Generation で分解されます。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/guide/glossary.md
+
+- id: q-core-concepts-3
+  unitId: core-concepts
+  afterSection: 実行単位ボルトとウォーキングスケルトン
+  prompt: 'ウォーキングスケルトンと ladder prompt の説明として正しいものはどれですか。'
+  choices:
+    - '最初のボルトが端から端まで動く最小スライスで常にゲート付き、承認直後に ladder prompt が自律かゲートかを一度だけ問う'
+    - '最後のボルトがウォーキングスケルトンになり、ladder prompt は毎ボルト発火する'
+    - 'ウォーキングスケルトンは省略可能で、ladder prompt は存在しない'
+  answerIndex: 0
+  explanation: '最初のボルト(ウォーキングスケルトン)は常にゲート付きで、承認直後に ladder prompt が一度だけ自律/ゲートを尋ねます。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/harness-engineering/08-construction-and-swarm.md
+
+- id: q-core-concepts-4
+  unitId: core-concepts
+  afterSection: スモールモブと11のエージェント
+  prompt: 'モブプログラミングにおけるドライバーの役割として正しいものはどれですか。'
+  choices:
+    - '一人で設計判断を下し、実装も単独で進める'
+    - 'ナビゲーターの指示を受けてコードを入力する「賢い入力装置」に徹する'
+    - 'コードは書かず、完成後のレビューだけを担当する'
+  answerIndex: 1
+  explanation: 'ドライバーは設計判断を独りで下さず、ナビゲーターの意図をコードへ翻訳する役に徹します。役割は定期的に交代します。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/core/knowledge/aidlc-delivery-agent/mob-programming-guide.md
+
+# ─────────────────────────────────────────────────────────────
+# ④ phases-overview(5問)
+# ─────────────────────────────────────────────────────────────
+- id: q-phases-overview-1
+  unitId: phases-overview
+  afterSection: initializationとideation
+  prompt: 'Initialization フェーズ(0.1〜0.3)の説明として正しいものはどれですか。'
+  choices:
+    - '各ステージに承認ゲートがあり、人間が逐一承認する'
+    - 'ブラウンフィールドのときだけ実行される'
+    - '承認ゲートを持たず、aidlc-utility init の中で自動的に(1 秒未満で)走る'
+  answerIndex: 2
+  explanation: '初期化の 3 ステージは決定的で、承認ゲートなしに aidlc-utility init 内で自動実行されます。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/guide/04-phases-and-stages.md
+
+- id: q-phases-overview-2
+  unitId: phases-overview
+  afterSection: inceptionフェーズの構成
+  prompt: 'Inception の 2.1 リバースエンジニアリングが実行される条件はどれですか。'
+  choices:
+    - 'ブラウンフィールド(既存コードベース)のとき'
+    - 'すべてのプロジェクトで常に'
+    - 'グリーンフィールド(新規)のときのみ'
+  answerIndex: 0
+  explanation: '2.1 は二段構えのサブエージェントとして走り、既存コードベース(ブラウンフィールド)でのみ実行されます。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/reference/04-stages/inception.md
+
+- id: q-phases-overview-3
+  unitId: phases-overview
+  afterSection: constructionとボルト
+  prompt: 'Construction でボルトが失敗したときの挙動として正しいものはどれですか。'
+  choices:
+    - '自律モードでは失敗を無視してそのまま継続する'
+    - '自律モードでも必ず停止し、retry / skip / abort を人間に尋ねる'
+    - '常にワークフロー全体を即座に破棄する'
+  answerIndex: 1
+  explanation: '失敗は常に構築を止めます。これは自律モードでも唯一割り込む場面で、retry / skip / abort を人間に尋ねます。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/guide/04-phases-and-stages.md
+
+- id: q-phases-overview-4
+  unitId: phases-overview
+  afterSection: operationとフェーズ境界検証
+  prompt: 'Operation フェーズ(4.1〜4.7)の実行条件として正しいものはどれですか。'
+  choices:
+    - '常に全 7 ステージが必ず実行される'
+    - '承認ゲートを一切持たない'
+    - 'すべて条件付きで、mvp・poc・bugfix・refactor などはフェーズ全体を省くことがある'
+  answerIndex: 2
+  explanation:
+    '7 ステージはすべて条件付きで、mvp・poc・bugfix・refactor は Operation を丸ごと省きます。4.7
+    は終端で 1.1 へのフィードバックループを持ちます。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/reference/04-stages/operation.md
+
+- id: q-phases-overview-5
+  unitId: phases-overview
+  afterSection: v1とv2の対比
+  prompt: 'v1(1.0.1)と v2 のフェーズ構成の違いとして正しいものはどれですか。'
+  choices:
+    - 'v1 は 3 フェーズで Operations はプレースホルダー、v2 は 5 フェーズで Operation が実体化している'
+    - 'v1 が 5 フェーズ、v2 が 3 フェーズ'
+    - 'どちらも同じ 5 フェーズで違いはない'
+  answerIndex: 0
+  explanation:
+    'v1 は Inception / Construction / Operations の 3 フェーズで Operations
+    はプレースホルダーでした。v2 は 5 フェーズ・32 ステージへ拡張されています。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/v1.0.1/aidlc-rules/aws-aidlc-rules/core-workflow.md
+
+# ─────────────────────────────────────────────────────────────
+# ⑤ gates-and-human-oversight(4問)
+# ─────────────────────────────────────────────────────────────
 - id: q-gates-1
   unitId: gates-and-human-oversight
-  afterSection: 承認ゲートの考え方
-  prompt: 承認ゲートで人間ができるアクションはどれですか。
+  afterSection: tri-modeの質問フロー
+  prompt: 'Tri-Mode の質問フローに含まれる 3 つのモードはどれですか。'
   choices:
-    - 承認(Approve)または変更要求(Request Changes)
-    - 承認のみ
-    - 何もできない
-  answerIndex: 0
-  explanation: ゲートでは人間が Approve するか Request Changes を選びます。重要な意思決定は人間が行います。
-  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/guide/02-your-first-workflow.md
+    - '音声 / 動画 / テキスト'
+    - 'Guide Me / Edit File / Chat'
+    - '自動 / 半自動 / 手動'
+  answerIndex: 1
+  explanation: 'Guide Me(構造化質問)・Edit File(直接編集)・Chat(自由対話)の 3
+    モードは、いずれも質問ファイルという一つの正本に収束します。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/guide/07-interaction-modes.md
 
 - id: q-gates-2
   unitId: gates-and-human-oversight
-  afterSection: trimodeの質問フロー
-  prompt: Tri-Mode の質問フローに含まれるモードはどれですか。
+  afterSection: 承認ゲートと3ストライク離脱
+  prompt: '同じステージで変更要求が 3 回以上続いたときに現れる第三の選択肢はどれですか。'
   choices:
-    - Guide Me / Edit File / Chat
-    - 音声入力のみ
-    - 自動承認のみ
-  answerIndex: 0
-  explanation: Guide Me・Edit File・Chat の3モードから状況に応じて入力方法を選べます。
+    - 'Delete all(全成果物を削除する)'
+    - 'Skip phase(フェーズごと飛ばす)'
+    - 'Accept as-is(現状のまま受け入れて先へ進む)'
+  answerIndex: 2
+  explanation: '3-Strike リビジョン離脱では Accept as-is
+    が現れ、現行版をアーカイブして無限リビジョンループを防ぎます。回数は次ステージでリセットされます。'
   sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/guide/07-interaction-modes.md
 
 - id: q-gates-3
   unitId: gates-and-human-oversight
-  afterSection: 3ストライク離脱
-  prompt: 3ストライク離脱の仕組みの目的として正しいものはどれですか。
+  afterSection: 人間が決めaiが実行する
+  prompt: '「No emergent behavior(創発的な挙動をさせない)」が意味することはどれですか。'
   choices:
-    - 同じゲートでの変更要求が続いたときに堂々巡りを避ける
-    - テストを自動でスキップする
-    - デプロイを高速化する
+    - '承認メニュー・完了メッセージ・状態遷移が標準化され、思いつきで振る舞いを変えない'
+    - 'エージェントが必要に応じて独自メニューを自由に発明する'
+    - 'ワークフローの手順が実行のたびにランダムに変わる'
   answerIndex: 0
-  explanation: 変更要求が3回続くとリビジョンループから離脱し、根本的な方針の見直しを促します。
+  explanation: 'エージェントは定められたプロトコルに従い、メニューや遷移は標準化されます。予測可能だからこそ人間はゲートで安心して判断できます。'
+  sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/core/knowledge/aidlc-shared/ai-dlc-principles.md
+
+- id: q-gates-4
+  unitId: gates-and-human-oversight
+  afterSection: コンテキスト管理とゲートでの再開
+  prompt: 'コンパクション後の再開でセッションが提示する 4 つのオプションに含まれないものはどれですか。'
+  choices:
+    - '最後のチェックポイントから再開する'
+    - '現ステージをやり直す'
+    - '特定ステージへジャンプする'
+    - 'デプロイを自動実行する'
+  answerIndex: 3
+  explanation: '4 つの再開オプションは Resume / Redo / Jump / Start fresh
+    です。デプロイの自動実行は再開オプションではありません。'
   sourceUrl: https://github.com/awslabs/aidlc-workflows/blob/b67798c37c71855271b70882a33f47890d41f212/docs/guide/11-session-management.md
