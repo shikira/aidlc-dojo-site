@@ -1,0 +1,120 @@
+---
+// UI-3 UnitPage — canonical variant (/units/{unit}/) — FR-1.4 / G-1 / G-4.
+//
+// getStaticPaths enumerates every unit once. The canonical page has NO
+// breadcrumb and NO prev/next nav; instead UnitNav's canonical mode renders a
+// "この単元を含む学習パス" card (getPathsContaining → G-4). The body is the same
+// interleaved sections + QuizBlock islands as the path-context page (shared
+// UnitBody). SharedLayout receives its own /units/{id}/ as canonicalUrl. No new
+// client JS (S-1); labels via t() (S-2).
+import SharedLayout from '../../../layouts/SharedLayout.astro';
+import TocDisclosure from '../../../components/TocDisclosure.astro';
+import UnitNav from '../../../components/UnitNav.astro';
+import UnitBody from '../../../components/UnitBody.astro';
+import VersionTag from '../../../components/VersionTag.astro';
+import { t } from '../../../i18n/t';
+import { SITE_ORIGIN } from '../../../config';
+import { getCollection, render } from 'astro:content';
+import { loadCollections } from '../../../lib/content/parse';
+import { createContentModel } from '../../../lib/content/model';
+import { pathUnitUrl } from '../../../lib/routes';
+import { extractToc } from '../../../lib/toc';
+import {
+  interleaveQuestions,
+  splitSections,
+} from '../../../lib/pages/interleave';
+import type { NavState, PathRef } from '../../../components/contracts';
+
+export async function getStaticPaths() {
+  const model = createContentModel(loadCollections());
+  const entries = await getCollection('units');
+  const entryById = new Map(entries.map((entry) => [entry.id, entry]));
+
+  return model.getAllUnits().map((unit) => {
+    const entry = entryById.get(unit.id);
+    if (!entry) {
+      throw new Error(
+        `units/[unit]: no unit collection entry for "${unit.id}".`,
+      );
+    }
+    const pathsContaining: PathRef[] = model
+      .getPathsContaining(unit.id)
+      .map((path) => ({
+        belt: path.belt,
+        nameJa: path.nameJa,
+        href: pathUnitUrl(path.belt, unit.id),
+      }));
+    return {
+      params: { unit: unit.id },
+      props: {
+        entry,
+        readingTimeMin: unit.readingTimeMin,
+        version: unit.version,
+        pathsContaining,
+        questions: model.getQuestionsForUnit(unit.id),
+      },
+    };
+  });
+}
+
+const { entry, readingTimeMin, version, pathsContaining, questions } =
+  Astro.props;
+
+const { headings } = await render(entry);
+const html = entry.rendered?.html;
+if (!html) {
+  throw new Error(`units/[unit]: unit "${entry.id}" has no rendered HTML.`);
+}
+
+const items = interleaveQuestions(splitSections(html), questions);
+const toc = extractToc(headings);
+const unitTitle = entry.data.title;
+const navState: NavState = { mode: 'canonical', pathsContaining };
+---
+
+<SharedLayout
+  title={`${unitTitle} — ${t('site.name')}`}
+  description={`${unitTitle}${t('page.unit.descriptionSuffix')}`}
+  canonicalUrl={`${SITE_ORIGIN}/units/${entry.id}/`}
+>
+  <article class="unit-page unit-page--canonical">
+    <header class="unit-header">
+      <h1>{unitTitle}</h1>
+      <p class="unit-meta">
+        <VersionTag version={version} />
+        <span class="unit-meta__reading">
+          <span class="visually-hidden">{t('reading.time.label')}: </span>
+          <time datetime={`PT${readingTimeMin}M`}
+            >{readingTimeMin}{t('reading.time.unit')}</time
+          >
+        </span>
+      </p>
+    </header>
+
+    <TocDisclosure entries={toc} />
+    <UnitBody items={items} />
+    <UnitNav state={navState} />
+  </article>
+</SharedLayout>
+
+<style>
+  .unit-header {
+    margin-bottom: var(--space-5);
+    padding-bottom: var(--space-4);
+    border-bottom: var(--border-width) solid var(--color-border);
+  }
+
+  .unit-header h1 {
+    margin: 0 0 var(--space-3);
+  }
+
+  .unit-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    margin: 0;
+    color: var(--color-muted);
+    font-size: var(--font-size-sm);
+  }
+</style>

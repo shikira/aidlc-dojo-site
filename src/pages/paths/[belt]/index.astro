@@ -1,0 +1,151 @@
+---
+// UI-2 PathPage (/paths/{belt}/) — the belt's ordered unit list (M2 / US-R1-03/08/11).
+//
+// getStaticPaths enumerates every CT-2 path. The page renders a belt header
+// (name + audience + summed reading time), the ordered PathList, and a path
+// tail that previews graduation → /roadmap/#exam (UW-05 landing anchor). A belt
+// with zero units renders the "準備中 + roadmap" empty state instead of a
+// dead-end (B-4 / FR-3.5). No client JS (S-1); labels via t() (S-2).
+import SharedLayout from '../../../layouts/SharedLayout.astro';
+import PathList from '../../../components/PathList.astro';
+import { t } from '../../../i18n/t';
+import { SITE_ORIGIN } from '../../../config';
+import { loadCollections } from '../../../lib/content/parse';
+import { createContentModel } from '../../../lib/content/model';
+import { pathTotalReadingMin } from '../../../lib/pages/reading';
+import { pathUnitUrl } from '../../../lib/routes';
+import type { PathListItem } from '../../../components/contracts';
+
+export async function getStaticPaths() {
+  const model = createContentModel(loadCollections());
+  return model.getAllPaths().map((path) => {
+    const units = model.getUnitsForPath(path.belt);
+    const items: PathListItem[] = units.map((unit) => ({
+      unitId: unit.id,
+      title: unit.title,
+      version: unit.version,
+      readingTimeMin: unit.readingTimeMin,
+      href: pathUnitUrl(path.belt, unit.id),
+    }));
+    return {
+      params: { belt: path.belt },
+      props: { path, items, totalReadingMin: pathTotalReadingMin(units) },
+    };
+  });
+}
+
+const { path, items, totalReadingMin } = Astro.props;
+const audienceLabel = t(`belt.audience.${path.audience}`);
+const isEmpty = items.length === 0;
+---
+
+<SharedLayout
+  title={`${path.nameJa} — ${t('site.name')}`}
+  description={`${path.nameJa}${t('page.path.descriptionSuffix')}`}
+  canonicalUrl={`${SITE_ORIGIN}/paths/${path.belt}/`}
+>
+  <div class="path-page">
+    <header class="path-header" data-belt={path.belt}>
+      <span class="path-header__bar" aria-hidden="true"></span>
+      <div class="path-header__text">
+        <h1>{path.nameJa}</h1>
+        <p class="path-header__audience">
+          <span class="visually-hidden">{t('belt.audience.label')}: </span>{
+            audienceLabel
+          }
+        </p>
+        {
+          !isEmpty && (
+            <p class="path-header__total">
+              {t('reading.time.total')}:{' '}
+              <time datetime={`PT${totalReadingMin}M`}>
+                {totalReadingMin}
+                {t('reading.time.unit')}
+              </time>
+            </p>
+          )
+        }
+      </div>
+    </header>
+
+    {
+      isEmpty ? (
+        <section class="path-empty" aria-labelledby="path-empty-heading">
+          <h2 id="path-empty-heading">{t('path.empty.heading')}</h2>
+          <p>{t('path.empty.body')}</p>
+          <a href="/roadmap/" data-testid="path-empty-roadmap">
+            {t('path.empty.roadmapLink')}
+          </a>
+        </section>
+      ) : (
+        <Fragment>
+          <PathList belt={path.belt} items={items} />
+          <section class="path-tail" aria-labelledby="path-tail-heading">
+            <h2 id="path-tail-heading">{t('path.tail.heading')}</h2>
+            <p>{t('path.tail.body')}</p>
+            <a href="/roadmap/#exam" data-testid="path-tail-exam">
+              {t('path.tail.examLink')}
+            </a>
+          </section>
+        </Fragment>
+      )
+    }
+  </div>
+</SharedLayout>
+
+<style>
+  .path-header {
+    display: flex;
+    gap: var(--space-4);
+    padding-bottom: var(--space-4);
+    margin-bottom: var(--space-4);
+    border-bottom: var(--border-width) solid var(--color-border);
+  }
+
+  .path-header__bar {
+    flex: 0 0 var(--space-2);
+    border-radius: var(--radius);
+    background: var(--color-border);
+  }
+
+  .path-header[data-belt='white'] .path-header__bar {
+    background: var(--belt-white);
+  }
+
+  .path-header[data-belt='brown'] .path-header__bar {
+    background: var(--belt-brown);
+  }
+
+  .path-header[data-belt='black'] .path-header__bar {
+    background: var(--belt-black);
+  }
+
+  .path-header h1 {
+    margin: 0 0 var(--space-2);
+  }
+
+  .path-header__audience {
+    margin: 0 0 var(--space-2);
+    color: var(--color-muted);
+  }
+
+  .path-header__total {
+    margin: 0;
+    color: var(--color-muted);
+    font-size: var(--font-size-sm);
+  }
+
+  .path-tail,
+  .path-empty {
+    margin-top: var(--space-6);
+    padding: var(--space-5);
+    background: var(--color-surface);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius);
+  }
+
+  .path-tail h2,
+  .path-empty h2 {
+    margin-top: 0;
+  }
+</style>

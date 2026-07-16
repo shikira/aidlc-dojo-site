@@ -32,6 +32,7 @@
   /* belt accent colours — ALWAYS paired with a text label (REL-7). */
   --belt-white: #e9e9ec;
   --belt-yellow: #d7a900;
+  --belt-brown: #8a5a2b;
   --belt-black: #2a2d33;
 
   /* quiz correctness colours (UW-03) — the COLOUR third of the 3-fold signal
@@ -86,6 +87,7 @@
   --color-incorrect: #ff7b72;
   --belt-white: #cfd2d8;
   --belt-yellow: #ffcf3f;
+  --belt-brown: #c8905a;
   --belt-black: #0c0e12;
 }
 
@@ -104,6 +106,7 @@
     --color-incorrect: #ff7b72;
     --belt-white: #cfd2d8;
     --belt-yellow: #ffcf3f;
+    --belt-brown: #c8905a;
     --belt-black: #0c0e12;
   }
 }

@@ -46,9 +46,10 @@ export const dictionary: Record<Locale, Record<string, string>> = {
     'nav.unitnav.prev': '前の単元',
     'nav.unitnav.next': '次の単元',
     'nav.unitnav.first': 'このパスの先頭の単元です。',
-    'nav.unitnav.graduation': '白帯卒業!',
+    'nav.unitnav.graduation': 'このパスを修了しました!',
     'nav.unitnav.graduationHint':
       '次の帯へ、またはロードマップへ進みましょう。',
+    'nav.unitnav.graduationExam': '次へ: 問題集・認定試験(準備中)',
     'nav.unitnav.backToPath': 'パスに戻る',
     'nav.unitnav.canonicalHeading': 'この単元を含む学習パス',
     'nav.unitnav.aria': '単元ナビゲーション',
@@ -100,13 +101,6 @@ export const dictionary: Record<Locale, Record<string, string>> = {
     'quiz.noscript.message':
       'この問題に答えるには JavaScript を有効にしてください。本文は JavaScript なしでも読めます。',
 
-    // quiz construction demo (temporary — UW-04 owns real page composition).
-    'page.quizdemo.title': 'QuizBlock デモ(構築用) — AI-DLC DOJO',
-    'page.quizdemo.description':
-      'UW-03 QuizBlock アイランドの構築用デモページ。UW-04 のページ構成で置き換えられます。',
-    'page.quizdemo.heading': 'QuizBlock デモ(構築用)',
-    'page.quizdemo.note':
-      'このページは UW-03 の島をビルドさせるための一時的な検証用ページです。UW-04 のページ構成で置き換えられます。',
     // ===================================================================
     // UW-05 静的ページ群 (S4〜S7). All rendered text routes through t() so no
     // Japanese string is hardcoded in .astro/.ts sources (BV-4 / NFR-9). Body
@@ -282,6 +276,67 @@ export const dictionary: Record<Locale, Record<string, string>> = {
     'news.empty.linkPaths': '白帯パスを見る',
     'news.breadcrumb.list': '新着',
     'news.article.dateLabel': '公開日',
+
+    // ===================================================================
+    // UW-04 学習ページ (UI-1 TopPage / UI-2 PathPage / UI-3 UnitPage). All
+    // rendered UI text routes through t() (BV-4 / NFR-9); unit body Markdown is
+    // exempt (S-2). Belt/audience labels map CT-2 enum values to Japanese; a
+    // missing mapping fails the build (t() fail-fast).
+    // ===================================================================
+
+    // global nav — brown belt. The paths use belt=brown; the earlier "yellow"
+    // nav link pointed at a non-existent /paths/yellow/ (dead-end fix).
+    'nav.global.pathBrown': '茶帯パス',
+
+    // reading time — machine-readable <time datetime="PTnM"> + labels (FR-1.5 / S-5)
+    'reading.time.label': '読了時間の目安',
+    'reading.time.total': '合計読了時間',
+    'reading.time.unit': '分',
+
+    // belt audience labels (map CT-2 `audience` enum → JA)
+    'belt.audience.label': '対象',
+    'belt.audience.foundational': 'これから学ぶ方へ',
+    'belt.audience.associate': '実務で使い始める方へ',
+    'belt.audience.professional': 'チームへ展開する方へ',
+
+    // C2 BeltCard
+    'belt.card.unitCount': '単元数',
+    'belt.card.unit': '単元',
+    'belt.card.cta': 'このパスを見る',
+
+    // C3 PathList
+    'nav.pathlist.aria': '学習パスの単元一覧',
+    'pathlist.unitNumber.label': '単元番号',
+
+    // UI-1 TopPage (M1)
+    'page.home.hero.subtitle':
+      'AI駆動開発ライフサイクル(AI-DLC)を、白帯・茶帯・黒帯の3つの学習パスで体系的に学べる非公式の道場です。',
+    'page.home.hero.cta': '学習を始める',
+    'page.home.belts.heading': '帯を選んで始める',
+    'page.home.belts.intro':
+      'レベルに合わせて帯を選びましょう。はじめての方は白帯からがおすすめです。',
+    'page.home.news.heading': '新着',
+    'page.home.news.viewAll': '新着をすべて見る',
+    'page.home.roadmap.heading': 'これからの予定',
+    'page.home.roadmap.body':
+      '公開済みの機能とこれから取り組む予定は、ロードマップにまとめています。',
+    'page.home.roadmap.link': 'ロードマップを見る',
+
+    // UI-2 PathPage (M2)
+    'page.path.descriptionSuffix':
+      ' の学習パス。単元を順に読み進め、クイズで理解度を確認しながら学べます。— AI-DLC DOJO',
+    'path.tail.heading': 'このパスを修了したら',
+    'path.tail.body':
+      'すべての単元を終えたら、腕試しの問題集・認定試験(準備中)に挑戦できます。公開予定はロードマップをご覧ください。',
+    'path.tail.examLink': '問題集・認定試験の予定を見る(準備中)',
+    'path.empty.heading': '準備中です',
+    'path.empty.body':
+      'この帯の単元は現在準備中です。公開までの間は、ロードマップで今後の予定をご確認ください。',
+    'path.empty.roadmapLink': 'ロードマップを見る',
+
+    // UI-3 UnitPage (M3)
+    'page.unit.descriptionSuffix':
+      ' — AI-DLC DOJO の学習単元。読んで、区切りごとのクイズで理解度を確認できます。',
   },
   en: {
     // Reserved (R4). Populated with the SAME key set as `ja`. Empty for R1.

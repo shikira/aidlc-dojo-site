@@ -57,8 +57,11 @@ const { state } = Astro.props;
           <p class="unit-nav__graduation-title">
             {t('nav.unitnav.graduation')}
           </p>
-          <p>{t('nav.unitnav.graduationHint')}</p>
           <p class="unit-nav__belt-name">{state.beltNameJa}</p>
+          <p>{t('nav.unitnav.graduationHint')}</p>
+          <a class="unit-nav__graduation-exam" href="/roadmap/#exam">
+            {t('nav.unitnav.graduationExam')}
+          </a>
         </aside>
       )}
 
