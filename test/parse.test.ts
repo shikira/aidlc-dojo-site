@@ -22,8 +22,8 @@ describe('loadCollections (sample content)', () => {
 
   it('loads all four collections from disk', () => {
     expect(collections.units.length).toBeGreaterThanOrEqual(2);
-    expect(collections.paths).toHaveLength(2);
-    expect(collections.questions).toHaveLength(40);
+    expect(collections.paths).toHaveLength(3);
+    expect(collections.questions).toHaveLength(60);
     expect(collections.articles.length).toBeGreaterThanOrEqual(1);
   });
 

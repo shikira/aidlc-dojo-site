@@ -36,8 +36,9 @@ describe('getAllUnits / getUnit (fail-fast)', () => {
 });
 
 describe('paths and reverse index', () => {
-  it('getAllPaths returns the white and brown paths', () => {
+  it('getAllPaths returns the black, brown, and white paths', () => {
     expect(model.getAllPaths().map((path) => path.belt)).toEqual([
+      'black',
       'brown',
       'white',
     ]);
@@ -54,8 +55,8 @@ describe('paths and reverse index', () => {
   });
 
   it('getUnitsForPath throws for an unknown belt', () => {
-    expect(() => model.getUnitsForPath('black')).toThrow(
-      /no path for belt "black"/,
+    expect(() => model.getUnitsForPath('green' as never)).toThrow(
+      /no path for belt "green"/,
     );
   });
 
