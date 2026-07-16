@@ -1,0 +1,83 @@
+---
+// UnitBody — internal composition partial for the UnitPage body (UI-3).
+//
+// It renders the interleaved render order produced by `interleaveQuestions`:
+// each section's HTML via `set:html` (no wrapper, so the unit's own `<h2 id>`
+// headings anchor the TOC), immediately followed by the UW-03 QuizBlock island
+// for that section's questions (Z-1). QuizLabels are resolved HERE via t() at
+// BUILD time and passed as props (Z-2 / NFR-9) — the whole dictionary never
+// reaches the client. QuizBlock is the ONLY island; this partial adds NO new
+// client JS (S-1). Shared by both dual-generation UnitPages so the interleaving
+// logic lives in one place.
+import QuizBlock from './QuizBlock.astro';
+import { t } from '../i18n/t';
+import type { RenderItem } from '../lib/pages/interleave';
+import type { QuizLabels } from './quiz/contracts';
+
+interface Props {
+  items: RenderItem[];
+}
+
+const { items } = Astro.props;
+
+// Build-time label resolution (Z-2) — identical set to quiz-demo/UW-03 (I3).
+const labels: QuizLabels = {
+  submit: t('quiz.action.submit'),
+  retry: t('quiz.action.retry'),
+  correct: t('quiz.result.correct'),
+  incorrect: t('quiz.result.incorrect'),
+  correctSymbol: t('quiz.symbol.correct'),
+  incorrectSymbol: t('quiz.symbol.incorrect'),
+  explanationLabel: t('quiz.label.explanation'),
+  sourceLabel: t('quiz.label.source'),
+  externalNote: t('quiz.label.external'),
+  noscript: t('quiz.noscript.message'),
+};
+---
+
+<div class="unit-body">
+  {
+    items.map((item) =>
+      item.kind === 'section' ? (
+        <Fragment set:html={item.html} />
+      ) : (
+        <QuizBlock
+          questionId={item.question.id}
+          prompt={item.question.prompt}
+          choices={item.question.choices}
+          answerIndex={item.question.answerIndex}
+          explanation={item.question.explanation}
+          sourceUrl={item.question.sourceUrl}
+          labels={labels}
+        />
+      ),
+    )
+  }
+</div>
+
+<style>
+  .unit-body :global(h2) {
+    margin-top: var(--space-6);
+    scroll-margin-top: var(--space-4);
+  }
+
+  .unit-body :global(p),
+  .unit-body :global(ul),
+  .unit-body :global(ol) {
+    margin: 0 0 var(--space-4);
+  }
+
+  .unit-body :global(pre) {
+    padding: var(--space-4);
+    border-radius: var(--radius);
+    overflow-x: auto;
+  }
+
+  .unit-body :global(code) {
+    font-size: var(--font-size-sm);
+  }
+
+  .unit-body :global(a) {
+    color: var(--accent);
+  }
+</style>

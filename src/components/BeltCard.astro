@@ -1,0 +1,131 @@
+---
+// BeltCard (C2) — a belt-selection "door" on the TopPage (UI-1 / FR-3.1).
+//
+// UW-01 froze `BeltCardProps` in components/contracts.ts but shipped no
+// component; this is the minimal, tokens-only implementation. The belt is
+// conveyed by TEXT (the path name + audience) AND colour (the accent bar), never
+// colour alone (S-6 / A-7). No client JS — pure presentation. All labels route
+// through t() (S-2 / NFR-9); `nameJa`/counts are supplied by the page from UW-02
+// queries.
+import { t } from '../i18n/t';
+import type { BeltCardProps } from './contracts';
+
+type Props = BeltCardProps;
+
+const { belt, nameJa, audience, unitCount, totalReadingMin, href } =
+  Astro.props;
+
+// Map the CT-2 audience enum to a localized label (fail-fast if unmapped).
+const audienceLabel = t(`belt.audience.${audience}`);
+---
+
+<article class="belt-card" data-belt={belt} data-testid={`belt-card-${belt}`}>
+  <span class="belt-card__bar" aria-hidden="true"></span>
+  <div class="belt-card__body">
+    <h3 class="belt-card__name">
+      <a href={href} data-testid={`belt-card-link-${belt}`}>{nameJa}</a>
+    </h3>
+    <p class="belt-card__audience">
+      <span class="belt-card__audience-label"
+        >{t('belt.audience.label')}:
+      </span>{audienceLabel}
+    </p>
+    <dl class="belt-card__meta">
+      <div class="belt-card__meta-pair">
+        <dt>{t('belt.card.unitCount')}</dt>
+        <dd>{unitCount}{t('belt.card.unit')}</dd>
+      </div>
+      <div class="belt-card__meta-pair">
+        <dt>{t('reading.time.total')}</dt>
+        <dd>
+          <time datetime={`PT${totalReadingMin}M`}
+            >{totalReadingMin}{t('reading.time.unit')}</time
+          >
+        </dd>
+      </div>
+    </dl>
+    <span class="belt-card__cta" aria-hidden="true">{t('belt.card.cta')}</span>
+  </div>
+</article>
+
+<style>
+  .belt-card {
+    display: flex;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    background: var(--color-surface);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius);
+  }
+
+  .belt-card__bar {
+    flex: 0 0 var(--space-2);
+    border-radius: var(--radius);
+    background: var(--color-border);
+  }
+
+  .belt-card[data-belt='white'] .belt-card__bar {
+    background: var(--belt-white);
+  }
+
+  .belt-card[data-belt='brown'] .belt-card__bar {
+    background: var(--belt-brown);
+  }
+
+  .belt-card[data-belt='black'] .belt-card__bar {
+    background: var(--belt-black);
+  }
+
+  .belt-card__body {
+    flex: 1 1 auto;
+  }
+
+  .belt-card__name {
+    margin: 0 0 var(--space-2);
+    font-size: var(--font-size-lg);
+  }
+
+  .belt-card__name a {
+    text-decoration: none;
+    color: var(--color-fg);
+  }
+
+  .belt-card__name a:hover,
+  .belt-card__name a:focus-visible {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+
+  .belt-card__audience {
+    margin: 0 0 var(--space-3);
+    color: var(--color-muted);
+    font-size: var(--font-size-sm);
+  }
+
+  .belt-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    margin: 0 0 var(--space-3);
+  }
+
+  .belt-card__meta-pair {
+    margin: 0;
+  }
+
+  .belt-card__meta dt {
+    color: var(--color-muted);
+    font-size: var(--font-size-sm);
+  }
+
+  .belt-card__meta dd {
+    margin: 0;
+    font-weight: 700;
+  }
+
+  .belt-card__cta {
+    display: inline-block;
+    color: var(--accent);
+    font-weight: 700;
+  }
+</style>

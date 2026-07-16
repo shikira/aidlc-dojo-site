@@ -91,3 +91,35 @@ describe('getRoutePairs (URL dual-generation — US-R1-09)', () => {
     }
   });
 });
+
+describe('route inventory snapshot (UW-04 dual-generated pages)', () => {
+  // With UW-04 the path-context (/paths/{belt}/{unit}/) and canonical
+  // (/units/{unit}/) pages are all generated; lock the counts so an accidental
+  // content/route change surfaces here. 16 (path,unit) pairs — white 5 + brown 6
+  // + black 5, gates-and-human-oversight shared across white & brown — and 15
+  // unique units.
+  it('emits 16 path-context routes and 15 canonical routes', () => {
+    expect(routes.filter((route) => route.kind === 'path')).toHaveLength(16);
+    expect(routes.filter((route) => route.kind === 'canonical')).toHaveLength(
+      15,
+    );
+  });
+
+  it('has one canonical route per unique unit (no duplicate unit pages)', () => {
+    const canonicalIds = routes
+      .filter((route) => route.kind === 'canonical')
+      .map((route) => route.params.unitId);
+    expect(new Set(canonicalIds).size).toBe(canonicalIds.length);
+  });
+
+  it('every path-context route has a matching canonical route (dual generation)', () => {
+    const canonicalIds = new Set(
+      routes
+        .filter((route) => route.kind === 'canonical')
+        .map((route) => route.params.unitId),
+    );
+    for (const route of routes.filter((r) => r.kind === 'path')) {
+      expect(canonicalIds.has(route.params.unitId)).toBe(true);
+    }
+  });
+});
